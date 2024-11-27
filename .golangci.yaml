@@ -1,0 +1,9 @@
+linters:
+  enable-all: true
+linters-settings:
+  cyclop:
+    max-complexity: 12
+run:
+  go: '1.23'
+  timeout: 10m
+  tests: false
