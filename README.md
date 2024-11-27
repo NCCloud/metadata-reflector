@@ -42,7 +42,7 @@ It's possible to limit the watched resources and namespaces as well as configure
 
 #### <a id="supported-annotations"></a> Supported Annotations
 
-Below is a tabel of supported annotations with their purpose
+Below is a table of supported annotations with their purpose
 
 | Annotation    | Description |
 | ------------- | ----------- |
@@ -57,6 +57,6 @@ Below is a list of implemented features and features that could fit into this pr
 - [x] Label reflection from `Deployment`s to managed `Pod`s
 - [ ] Annotation reflection from `Deployment`s to managed `Pod`s
 - [ ] Label & Annotation reflection from an arbitrary source (e.g. Secret, ConfigMap, etc.) to an arbitrary target (e.g. `Deployment`, etc.)
-- [x] A background job to peridically check the state of the target resources
+- [x] A background job to periodically check the state of the target resources
 
 The priority of each feature will depend on the number of relevant use cases.
