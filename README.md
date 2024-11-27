@@ -27,7 +27,7 @@ metadata:
 Metadata Reflector will find pods managed by this deployment using `.spec.selector` and replicate them to the managed pods.
 
 Metadata Reflector will also annotate managed pods with a list of labels that were reflected, in this case `labels.metadata-reflector.spaceship.com/reflected-list: "feature-x"`.
-> NOTE: This list does not contain labels that should reflected but are not present on the deployment itself.
+> NOTE: This list does not contain labels that should be reflected but are not present on the deployment itself.
 
 If the label gets deleted/updated on the deployment, it will be deleted from the corresponding pods as well.
 
