@@ -1,12 +1,12 @@
-CLUSTER 	?= metadata-reflector
-GO 			?= go
-KIND 		?= kind
-DOCKER 		?= docker
+CLUSTER ?= metadata-reflector
+GO ?= go
+KIND ?= kind
+DOCKER ?= docker
 DOCKER_ARGS ?= --load
-APP_NAME 	?= ghcr.io/nccloud/metadata-reflector
-TAG 		?= 0.1.0-dev
-IMG 		?= ${APP_NAME}:${TAG}
-KIND_IMAGE 	?= kindest/node:v1.31.0
+APP_NAME ?= ghcr.io/nccloud/metadata-reflector
+TAG ?= 0.1.0-dev
+IMG ?= ${APP_NAME}:${TAG}
+KIND_IMAGE ?= kindest/node:v1.31.0
 
 GOLANGCILINT_IMAGE=docker.io/golangci/golangci-lint:v1.62.0
 
