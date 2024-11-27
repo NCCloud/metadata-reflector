@@ -3,7 +3,6 @@ package reflector
 import (
 	"context"
 	"errors"
-	"fmt"
 	"reflect"
 
 	"github.com/NCCloud/metadata-reflector/internal/clients"
@@ -19,23 +18,23 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
-type ReflectorController struct {
+type Controller struct {
 	kubeClient clients.KubernetesClient
 	logger     logr.Logger
 	config     *common.Config
 }
 
-func NewReflectorController(
+func NewController(
 	kubeClient clients.KubernetesClient, logger logr.Logger, config *common.Config,
-) ReflectorController {
-	return ReflectorController{
+) Controller {
+	return Controller{
 		kubeClient: kubeClient,
 		logger:     logger,
 		config:     config,
 	}
 }
 
-func (r *ReflectorController) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	namespacedName := req.NamespacedName
 	r.logger.Info("Starting reconciliation", "namespacedName", namespacedName)
 	defer r.logger.Info("Finished reconciliation", "namespacedName", namespacedName)
@@ -43,6 +42,7 @@ func (r *ReflectorController) Reconcile(ctx context.Context, req ctrl.Request) (
 	deployment, getDeployErr := r.kubeClient.GetDeployment(ctx, namespacedName)
 	if getDeployErr != nil {
 		r.logger.Error(getDeployErr, "Failed to get deployment", "namespacedName", namespacedName)
+
 		return ctrl.Result{}, getDeployErr
 	}
 
@@ -52,10 +52,11 @@ func (r *ReflectorController) Reconcile(ctx context.Context, req ctrl.Request) (
 		labelReflectResult ctrl.Result
 		labelReflectError  error
 	)
+
 	if common.MapHasPrefix(ReflectorLabelsAnnotationDomain, deployment.Annotations) {
-		labelReflectResult, labelReflectError = r.ReflectLabels(ctx, deployment)
+		labelReflectResult, labelReflectError = r.reflectLabels(ctx, deployment)
 	} else {
-		labelReflectResult, labelReflectError = r.UnsetReflectedLabels(ctx, deployment)
+		labelReflectResult, labelReflectError = r.unsetReflectedLabels(ctx, deployment)
 	}
 
 	// if the error is not nil, it always takes precedence over the result
@@ -74,6 +75,7 @@ func (r *ReflectorController) Reconcile(ctx context.Context, req ctrl.Request) (
 		if r.shouldRequeueAfterError(err) {
 			r.logger.Info("Reconciliation didn't succeed, requeuing...",
 				"namespacedName", namespacedName)
+
 			return ctrl.Result{}, err
 		}
 	}
@@ -81,23 +83,26 @@ func (r *ReflectorController) Reconcile(ctx context.Context, req ctrl.Request) (
 	return ctrl.Result{}, nil
 }
 
-// check if the error can be skipped as it's not fixable
-func (r *ReflectorController) shouldRequeueAfterError(err error) bool {
+// check if the error can be skipped as it's not fixable.
+func (r *Controller) shouldRequeueAfterError(err error) bool {
 	if err == nil {
 		return false
 	}
+
 	if errors.Is(err, ErrUnparsableAnnotation) {
 		return false
 	}
+
 	// since deploymentSelector is an immutable field, it will not be updated,
 	// so we will never be able to get pods
 	if errors.Is(err, ErrEmptyPodSelector) {
 		return false
 	}
+
 	return true
 }
 
-func (r *ReflectorController) shouldRequeueNow(result ctrl.Result) bool {
+func (r *Controller) shouldRequeueNow(result ctrl.Result) bool {
 	if result.Requeue || result.RequeueAfter != 0 {
 		return true
 	}
@@ -105,15 +110,17 @@ func (r *ReflectorController) shouldRequeueNow(result ctrl.Result) bool {
 	return false
 }
 
-// get a list of pods managed by deployment
-func (r *ReflectorController) GetManagedPods(
+// get a list of pods managed by deployment.
+func (r *Controller) getManagedPods(
 	ctx context.Context, deployment *appsv1.Deployment,
 ) (*v1.PodList, error) {
 	deploymentName := deployment.Name
+
 	podSelector, selectorErr := metav1.LabelSelectorAsSelector(deployment.Spec.Selector)
 	if selectorErr != nil {
 		r.logger.Error(selectorErr,
 			"Failed to get managed pods", "deployment", deploymentName)
+
 		return nil, selectorErr
 	}
 
@@ -121,6 +128,7 @@ func (r *ReflectorController) GetManagedPods(
 		r.logger.Error(ErrEmptyPodSelector,
 			"Cannot get managed pods as the selector would match everything",
 			"deployment", deploymentName)
+
 		return nil, ErrEmptyPodSelector
 	}
 
@@ -130,17 +138,19 @@ func (r *ReflectorController) GetManagedPods(
 	}
 
 	if len(pods.Items) == 0 {
-		podNotFoundErr := fmt.Errorf(
-			"Could not find pods for deployment %s with selector %s",
-			deploymentName, podSelector.String())
-		return nil, podNotFoundErr
+		r.logger.Error(ErrPodNotFound, "Could not find pods for deployment",
+			"deployment", deploymentName, "selector", podSelector.String())
+
+		return nil, ErrPodNotFound
 	}
+
 	r.logger.Info("Found Managed pods",
 		"count", len(pods.Items), "selector", podSelector.String())
+
 	return pods, nil
 }
 
-func (r *ReflectorController) FilterCreateEvents(e event.CreateEvent) bool {
+func (r *Controller) FilterCreateEvents(e event.CreateEvent) bool {
 	deployment, ok := e.Object.(*appsv1.Deployment)
 	if !ok {
 		return false
@@ -154,7 +164,7 @@ func (r *ReflectorController) FilterCreateEvents(e event.CreateEvent) bool {
 	return false
 }
 
-func (r *ReflectorController) FilterUpdateEvents(e event.UpdateEvent) bool {
+func (r *Controller) FilterUpdateEvents(e event.UpdateEvent) bool {
 	newDeployment, ok := e.ObjectNew.(*appsv1.Deployment)
 	if !ok {
 		return false
@@ -181,6 +191,7 @@ func (r *ReflectorController) FilterUpdateEvents(e event.UpdateEvent) bool {
 	// deployment scaled, we need to re-apply labels
 	newDeploymentReadyReplicas := newDeployment.Status.ReadyReplicas
 	oldDeploymentReadyReplicas := oldDeployment.Status.ReadyReplicas
+
 	if newDeploymentReadyReplicas > oldDeploymentReadyReplicas {
 		return true
 	}
@@ -193,8 +204,7 @@ func (r *ReflectorController) FilterUpdateEvents(e event.UpdateEvent) bool {
 	return false
 }
 
-func (r *ReflectorController) SetupWithManager(mgr ctrl.Manager) error {
-
+func (r *Controller) SetupWithManager(mgr ctrl.Manager) error {
 	predicate := predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
 			return r.FilterCreateEvents(e)
@@ -202,10 +212,10 @@ func (r *ReflectorController) SetupWithManager(mgr ctrl.Manager) error {
 		UpdateFunc: func(e event.UpdateEvent) bool {
 			return r.FilterUpdateEvents(e)
 		},
-		DeleteFunc: func(e event.DeleteEvent) bool {
+		DeleteFunc: func(_ event.DeleteEvent) bool {
 			return false
 		},
-		GenericFunc: func(e event.GenericEvent) bool {
+		GenericFunc: func(_ event.GenericEvent) bool {
 			return false
 		},
 	}

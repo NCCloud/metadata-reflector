@@ -5,13 +5,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics"
 )
 
-var (
-	DeploymentsMatchingSelector = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "metadata_reflector_deployments_matching_selector",
-		Help: "The total number of deployments matching the selector",
-	},
-		[]string{"selector"},
-	)
+var DeploymentsMatchingSelector = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+	Name: "metadata_reflector_deployments_matching_selector",
+	Help: "The total number of deployments matching the selector",
+},
+	[]string{"selector"},
 )
 
 func InitMetrics() {

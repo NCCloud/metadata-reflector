@@ -1,8 +1,19 @@
 linters:
   enable-all: true
+  disable:
+  - exhaustruct # Disallows to left unused fields in structs
+  - depguard # Exhausting
+  - gci # Disable gci import ordering checker since its buggy
+  - ireturn # Disallows to return Interfaces
+  - wrapcheck # Disallows to use non-wrapped errors
+  - perfsprint
+  - gochecknoglobals
+  - funlen
 linters-settings:
   cyclop:
     max-complexity: 12
+  varnamelen:
+    min-name-length: 1
 run:
   go: '1.23'
   timeout: 10m

@@ -5,7 +5,6 @@ import (
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
 
-	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -30,8 +29,7 @@ type kubernetesClient struct {
 	config *common.Config
 }
 
-func NewKubernetesClient(
-	ctx context.Context, mgr manager.Manager, config *common.Config, logger logr.Logger,
+func NewKubernetesClient(mgr manager.Manager, config *common.Config,
 ) KubernetesClient {
 	client := mgr.GetClient()
 	cacheClient := mgr.GetCache()
@@ -64,6 +62,7 @@ func (c *kubernetesClient) ListPods(ctx context.Context, labelSelector labels.Se
 	listOptions := &client.ListOptions{
 		LabelSelector: labelSelector,
 	}
+
 	if listErr := c.cacheClient.List(ctx, podList, listOptions); listErr != nil {
 		return nil, listErr
 	}
@@ -74,6 +73,7 @@ func (c *kubernetesClient) ListPods(ctx context.Context, labelSelector labels.Se
 func (c *kubernetesClient) GetDeployment(ctx context.Context, namespacedName types.NamespacedName,
 ) (*appsv1.Deployment, error) {
 	deployment := &appsv1.Deployment{}
+
 	if getErr := c.cacheClient.Get(ctx, namespacedName, deployment); getErr != nil {
 		return nil, getErr
 	}

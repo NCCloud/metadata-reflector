@@ -20,12 +20,12 @@ func main() {
 	config := common.NewConfig()
 	logger := zap.New()
 
-	mgr := clients.NewControllerManager(ctx, config, logger)
+	mgr := clients.NewControllerManager(config, logger)
 
 	metrics.InitMetrics()
 
-	kubeClient := clients.NewKubernetesClient(ctx, mgr, config, logger)
-	reflectorController := reflector.NewReflectorController(kubeClient, logger, config)
+	kubeClient := clients.NewKubernetesClient(mgr, config)
+	reflectorController := reflector.NewController(kubeClient, logger, config)
 
 	if reflectorControllerErr := reflectorController.SetupWithManager(mgr); reflectorControllerErr != nil {
 		panic(reflectorControllerErr)
@@ -40,12 +40,15 @@ func main() {
 	}
 
 	if config.BackgroundReflectionInterval != 0 {
-		go reflectorController.StartBackgroundJob(ctx)
+		go func() {
+			if err := reflectorController.StartBackgroundJob(ctx); err != nil {
+				panic(err)
+			}
+		}()
 	}
 
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		logger.Error(err, "problem running manager")
 		panic(err)
 	}
-
 }

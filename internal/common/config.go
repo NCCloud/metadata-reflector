@@ -21,6 +21,8 @@ type Config struct {
 	PrometheusMetricsPort int `env:"PROMETHEUS_METRICS_PORT" envDefault:"9090"`
 	// the port for health checking
 	HealthCheckPort int `env:"HEALTH_CHECK_PORT" envDefault:"8083"`
+	// whether to enable leader election
+	EnableLeaderElection bool `env:"ENABLE_LEADER_ELECTION" envDefault:"false"`
 }
 
 func NewConfig() *Config {

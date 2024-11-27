@@ -10,4 +10,5 @@ if empty, all deployments will match
 if empty, all namespaces will be watched
  - `PROMETHEUS_METRICS_PORT` (default: `9090`) - the port on which the Prometheus server should be exposed
  - `HEALTH_CHECK_PORT` (default: `8083`) - the port for health checking
+ - `ENABLE_LEADER_ELECTION` (default: `false`) - whether to enable leader election
 

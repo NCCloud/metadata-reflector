@@ -8,9 +8,6 @@ TAG ?= 0.1.0-dev
 IMG ?= ${APP_NAME}:${TAG}
 KIND_IMAGE ?= kindest/node:v1.31.0
 
-GOLANGCILINT_IMAGE=docker.io/golangci/golangci-lint:v1.62.0
-
-
 .PHONY: help
 help: ## Show help.
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -35,6 +32,10 @@ cluster: ## Create a single node kind cluster.
 cluster-delete: ## Delete the kind cluster.
 	$(KIND) delete cluster --name $(CLUSTER)
 
+.PHONY: fmt
+fmt: ## Run gofumpt.
+	@./helper.sh fmt
+
 .PHONY: lint
-lint: ## Run linter.
-	$(DOCKER) run -t --rm -v $(PWD):/app -w /app $(GOLANGCILINT_IMAGE) golangci-lint run -v --timeout=10m
+lint: fmt ## Run linter.
+	@./helper.sh lint
