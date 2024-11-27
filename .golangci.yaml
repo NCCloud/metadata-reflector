@@ -1,7 +1,7 @@
 linters:
   enable-all: true
   disable:
-  - exhaustruct # Disallows to left unused fields in structs
+  - exhaustruct # Disallows to leave unused fields in structs
   - depguard # Exhausting
   - gci # Disable gci import ordering checker since its buggy
   - ireturn # Disallows to return Interfaces
