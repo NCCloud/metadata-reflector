@@ -4,7 +4,7 @@ go 1.23.3
 
 require (
 	github.com/caarlos0/env/v11 v11.2.2
-	github.com/go-co-op/gocron/v2 v2.12.3
+	github.com/go-co-op/gocron/v2 v2.12.4
 	github.com/go-logr/logr v1.4.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/prometheus/client_golang v1.19.1
