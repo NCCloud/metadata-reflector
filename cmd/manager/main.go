@@ -5,7 +5,7 @@ import (
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
 	"github.com/NCCloud/metadata-reflector/internal/controllers/reflector"
-	"github.com/NCCloud/metadata-reflector/internal/metrics"
+	_ "github.com/NCCloud/metadata-reflector/internal/metrics"
 
 	"github.com/NCCloud/metadata-reflector/internal/clients"
 
@@ -21,8 +21,6 @@ func main() {
 	logger := zap.New()
 
 	mgr := clients.NewControllerManager(config, logger)
-
-	metrics.InitMetrics()
 
 	kubeClient := clients.NewKubernetesClient(mgr, config)
 	reflectorController := reflector.NewController(kubeClient, logger, config)

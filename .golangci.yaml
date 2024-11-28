@@ -6,6 +6,7 @@ linters:
   - gci # Disable gci import ordering checker since its buggy
   - ireturn # Disallows to return Interfaces
   - wrapcheck # Disallows to use non-wrapped errors
+  - gochecknoinits # Disallows to use init functions
   - perfsprint
   - gochecknoglobals
   - funlen

@@ -13,6 +13,9 @@ var DeploymentsMatchingSelector = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 )
 
 func InitMetrics() {
-	metrics.Registry.MustRegister(
-		DeploymentsMatchingSelector.WithLabelValues(""))
+	metrics.Registry.MustRegister(DeploymentsMatchingSelector)
+}
+
+func init() {
+	InitMetrics()
 }

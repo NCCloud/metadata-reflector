@@ -2,11 +2,11 @@ package reflector
 
 import (
 	"context"
-	"errors"
 	"reflect"
 
 	"github.com/NCCloud/metadata-reflector/internal/clients"
 	"github.com/NCCloud/metadata-reflector/internal/common"
+	"github.com/hashicorp/go-multierror"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -46,7 +46,7 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return ctrl.Result{}, getDeployErr
 	}
 
-	var reflectorErrors []error
+	var reflectorErrors *multierror.Error
 
 	var (
 		labelReflectResult ctrl.Result
@@ -60,46 +60,16 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 
 	// if the error is not nil, it always takes precedence over the result
-	// the idea is to not requeue after any error as there can be some errors that we want to skip
+	// the idea is not to requeue after any error as there can be other independent phases
 	// but also maintain the possibility to requeue now/after some time when there was no error
 	// and the result explicitly states that we need to requeue
 	if labelReflectError != nil {
-		reflectorErrors = append(reflectorErrors, labelReflectError)
+		reflectorErrors = multierror.Append(reflectorErrors, labelReflectError)
 	} else if r.shouldRequeueNow(labelReflectResult) {
 		return labelReflectResult, labelReflectError
 	}
 
-	// check if there is an error that requires requeuing
-	// we want to skip some errors that cannot be fixed by the controller
-	for _, err := range reflectorErrors {
-		if r.shouldRequeueAfterError(err) {
-			r.logger.Info("Reconciliation didn't succeed, requeuing...",
-				"namespacedName", namespacedName)
-
-			return ctrl.Result{}, err
-		}
-	}
-
-	return ctrl.Result{}, nil
-}
-
-// check if the error can be skipped as it's not fixable.
-func (r *Controller) shouldRequeueAfterError(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	if errors.Is(err, ErrUnparsableAnnotation) {
-		return false
-	}
-
-	// since deploymentSelector is an immutable field, it will not be updated,
-	// so we will never be able to get pods
-	if errors.Is(err, ErrEmptyPodSelector) {
-		return false
-	}
-
-	return true
+	return ctrl.Result{}, reflectorErrors.ErrorOrNil()
 }
 
 func (r *Controller) shouldRequeueNow(result ctrl.Result) bool {
