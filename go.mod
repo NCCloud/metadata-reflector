@@ -8,7 +8,7 @@ require (
 	github.com/go-logr/logr v1.4.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/prometheus/client_golang v1.19.1
-	k8s.io/api v0.31.2
+	k8s.io/api v0.31.3
 	k8s.io/apimachinery v0.31.3
 	k8s.io/client-go v0.31.2
 	sigs.k8s.io/controller-runtime v0.19.2
