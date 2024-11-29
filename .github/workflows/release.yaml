@@ -3,11 +3,15 @@ name: Release
 on:
   release:
     types: [published]
-  push:
 
 env:
   REGISTRY: "ghcr.io"
   IMAGE: "nccloud/metadata-reflector"
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency#example-only-cancel-in-progress-jobs-or-runs-for-the-current-workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   release:
