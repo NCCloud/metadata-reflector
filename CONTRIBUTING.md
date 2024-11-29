@@ -8,7 +8,7 @@ We are grateful for your willingness to contribute to this project! We are inter
 2. Submit a pull request.
 3. Make sure all tests are passing.
 
-***NOTE***: In order to make testing and merging of PRs easier, please submit changes for different fixes/features/improvements in a separate PRs.
+***NOTE***: In order to make testing and merging of PRs easier, please submit changes for different fixes/features/improvements in separate PRs.
 
 ### Technical Requirements
 
