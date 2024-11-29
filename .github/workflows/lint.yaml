@@ -2,15 +2,13 @@ name: Lint
 
 on:
   pull_request:
-  push:
 
 permissions:
   contents: read
 
 jobs:
   lint:
-    # if: github.actor != 'dependabot[bot]'
-    if: github.actor != 'BonySmoke'
+    if: github.actor != 'dependabot[bot]'
     name: Lint
     runs-on: ubuntu-latest
     steps:
