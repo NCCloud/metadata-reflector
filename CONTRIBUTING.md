@@ -18,10 +18,6 @@ We are grateful for your willingness to contribute to this project! We are inter
 
 Once changes have been merged, the release will be done by the responsible organization members.
 
-### Versioning
-
-Versioning should follow [semver](https://semver.org/). Any backwards incompatible changes should be bump the major version and stated in the Release Notes.
-
 ## 🛠 Development
 
 You can easily run the controller by following these steps:
