@@ -1,4 +1,7 @@
-FROM golang:1.23 AS builder
+FROM --platform=${BUILDPLATFORM} golang:1.23 AS builder
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /build
 
@@ -9,10 +12,12 @@ RUN go mod download
 
 COPY . .
 
+RUN CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
 
-RUN CGO_ENABLED=0 go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
-
-FROM alpine:3
+FROM --platform=${TARGETPLATFORM} alpine:3
 WORKDIR /app
 
 RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
