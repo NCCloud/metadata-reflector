@@ -10,7 +10,16 @@ Example:
 - **Problem**: we need to dynamically update labels on pods managed by a deployment without restarting them. Our system only manages deployments so we cannot label pods directly.
 - **Solution**: we can set & update the needed labels on the deployment itself and Metadata Reflector will find pods managed by the deployment and replicate the specified metadata.
 
-### Usage
+## 🛳️ Deployment
+
+The easiest way to deploy Metadata Reflector is using a Helm chart. We will release it soon, stay tuned for that!
+
+In the meantime, you can use our image to deploy the controller the preferred way:
+```
+docker pull ghcr.io/nccloud/metadata-reflector:latest
+```
+
+### 🚀 Usage
 
 To start using the Metadata Reflector, annotate the source `Deployment` with the [supported annotation](#supported-annotations), e.g. `labels.metadata-reflector.spaceship.com/list`:
 
@@ -35,10 +44,9 @@ If the annotation is deleted, all managed pods will also lose the label.
 
 Additionally, the presence of propagated labels will be checked in the background periodically.
 
-### Configuration
+### 🛠 Configuration
 
 It's possible to limit the watched resources and namespaces as well as configure the background job and other features. For more information, please check [environments.md](environments.md)
-
 
 #### <a id="supported-annotations"></a> Supported Annotations
 
@@ -60,3 +68,21 @@ Below is a list of implemented features and features that could fit into this pr
 - [x] A background job to periodically check the state of the target resources
 
 The priority of each feature will depend on the number of relevant use cases.
+
+## 🏷️ Versioning
+
+We use [SemVer](http://semver.org/) for versioning.
+To see the available versions, check the [tags on this repository](https://github.com/NCCloud/metadata-reflector/tags).
+
+## 🤝 Contribution
+
+We welcome contributions, issues, and feature requests!<br />
+If you have any issues or suggestions, please feel free to check the [issues page](https://github.com/NCCloud/metadata-reflector/issues) or create a new issue if you don't see one that matches your problem. <br>
+Please refer to our [contribution guidelines](CONTRIBUTING.md) for details.
+
+## 📝 License
+All functionality is in beta and is subject to change. The code is provided as-is with no warranties.<br>
+[Apache 2.0 License](./LICENSE)<br>
+<br><br>
+<img alt="logo" width="75" src="https://avatars.githubusercontent.com/u/7532706" /><br>
+Made with <span style="color: #e25555;">&hearts;</span> by [Namecheap Cloud Team](https://github.com/NCCloud)
