@@ -1,18 +1,19 @@
 FROM golang:1.23 as builder
 
-WORKDIR /workspace
-COPY go.mod go.mod
-COPY go.sum go.sum
-
-RUN go mod download
+WORKDIR /build
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
+RUN CGO_ENABLED=0 go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
 
-FROM gcr.io/distroless/static:nonroot
-WORKDIR /home/metadata-reflector
+FROM alpine:3
+WORKDIR /app
 
-COPY --from=builder /workspace/manager .
+RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
+RUN addgroup --gid 1000 app
+RUN adduser --disabled-password --gecos "" --ingroup app --no-create-home --uid 1000 app
 
-ENTRYPOINT ["/home/metadata-reflector/manager"]
+COPY --from=builder /build/manager /app/manager
+
+USER 1000
+ENTRYPOINT ["/app/manager"]
