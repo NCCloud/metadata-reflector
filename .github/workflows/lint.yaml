@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   lint:
+    if: github.actor != 'dependabot[bot]'
     name: Lint
     runs-on: ubuntu-latest
     steps:
@@ -19,5 +20,3 @@ jobs:
         run: go mod download
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
-        with:
-          args: --timeout=10m

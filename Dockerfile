@@ -1,18 +1,25 @@
-FROM golang:1.23 as builder
+FROM --platform=${BUILDPLATFORM} golang:1.23 AS builder
 
-WORKDIR /workspace
+ARG TARGETOS
+ARG TARGETARCH
+
+WORKDIR /build
+
 COPY go.mod go.mod
 COPY go.sum go.sum
-
+# cache dependencies
 RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
+RUN CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
 
 FROM gcr.io/distroless/static:nonroot
-WORKDIR /home/metadata-reflector
+WORKDIR /app
 
-COPY --from=builder /workspace/manager .
+COPY --from=builder /build/manager /app/manager
 
-ENTRYPOINT ["/home/metadata-reflector/manager"]
+ENTRYPOINT ["/app/manager"]
