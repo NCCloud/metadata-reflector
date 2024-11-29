@@ -32,7 +32,7 @@ You can easily run the controller by following these steps:
 make cluster
 ```
 
-1) Configure the environment variables according to [environments.md](environments.md) and run the project.
+2) Configure the environment variables according to [environments.md](environments.md) and run the project.
 
 ```bash
 export NAMESPACES="default,namespace1" # Metadata Reflector will be limited to these namespaces
