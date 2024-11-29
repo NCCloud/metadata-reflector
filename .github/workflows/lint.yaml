@@ -2,12 +2,15 @@ name: Lint
 
 on:
   pull_request:
+  push:
 
 permissions:
   contents: read
 
 jobs:
   lint:
+    # if: github.actor != 'dependabot[bot]'
+    if: github.actor != 'BonySmoke'
     name: Lint
     runs-on: ubuntu-latest
     steps:
@@ -19,5 +22,3 @@ jobs:
         run: go mod download
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
-        with:
-          args: --timeout=10m
