@@ -2,7 +2,13 @@ FROM golang:1.23 AS builder
 
 WORKDIR /build
 
+COPY go.mod go.mod
+COPY go.sum go.sum
+# cache dependencies
+RUN go mod download
+
 COPY . .
+
 
 RUN CGO_ENABLED=0 go build -a -ldflags "-s -w" -o manager cmd/manager/main.go
 
