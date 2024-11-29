@@ -3,6 +3,7 @@ name: Release
 on:
   release:
     types: [published]
+  push:
 
 env:
   REGISTRY: "ghcr.io"
@@ -12,6 +13,11 @@ jobs:
   release:
     name: Release Image
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        architecture: [amd64, arm, arm64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/386
+          platforms: linux/${{ matrix.architecture }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
