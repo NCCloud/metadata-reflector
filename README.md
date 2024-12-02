@@ -12,7 +12,7 @@ Example:
 
 ## 🛳️ Deployment
 
-The easiest way to deploy Metadata Reflector is using a Helm chart.
+The easiest way to deploy Metadata Reflector is using the Helm chart.
 
 ```
 helm repo add nccloud https://nccloud.github.io/charts

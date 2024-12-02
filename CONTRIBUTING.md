@@ -6,7 +6,7 @@ We are grateful for your willingness to contribute to this project! We are inter
 
 1. Fork this repository, develop, and test your changes.
 2. Submit a pull request.
-3. Make sure all tests are passing.
+3. Make sure all GitHub actions pass successfully.
 
 ***NOTE***: In order to make testing and merging of PRs easier, please submit changes for different fixes/features/improvements in separate PRs.
 
@@ -14,7 +14,7 @@ We are grateful for your willingness to contribute to this project! We are inter
 
 * Must follow [Golang best practices](https://go.dev/doc/effective_go)
 * Must pass CI jobs for linting. Please run `make lint` in the root of the project to know if the project complies with the requirements.
-* All changes require reviews from the responsible organization members before merge.
+* All changes require reviews from the responsible organization members before the merge.
 
 Once changes have been merged, the release will be done by the responsible organization members.
 
@@ -22,7 +22,7 @@ Once changes have been merged, the release will be done by the responsible organ
 
 You can easily run the controller by following these steps:
 
-1) Create a Kubernetes cluster or change the `kubectl` context for the existing one.
+1) Create a Kubernetes cluster or change the `kubectl` context to the existing one.
 
 ```bash
 make cluster
