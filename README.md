@@ -12,11 +12,11 @@ Example:
 
 ## 🛳️ Deployment
 
-The easiest way to deploy Metadata Reflector is using a Helm chart. We will release it soon, stay tuned for that!
+The easiest way to deploy Metadata Reflector is using a Helm chart.
 
-In the meantime, you can use our image to deploy the controller the preferred way:
 ```
-docker pull ghcr.io/nccloud/metadata-reflector:latest
+helm repo add nccloud https://nccloud.github.io/charts
+helm install metadata-reflector nccloud/metadata-reflector
 ```
 
 ### 🚀 Usage
