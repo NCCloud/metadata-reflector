@@ -1,0 +1,15 @@
+dir: mocks/{{ replaceAll .PackagePath "internal" "internal_" }}
+packages:
+  sigs.k8s.io/controller-runtime/pkg/cache:
+    interfaces:
+      Cache:
+  sigs.k8s.io/controller-runtime/pkg/client:
+    interfaces:
+      Client:
+  sigs.k8s.io/controller-runtime/pkg/manager:
+    interfaces:
+      Manager:
+  github.com/NCCloud/metadata-reflector/internal/clients:
+    interfaces:
+      KubernetesClient:
+issue-845-fix: True

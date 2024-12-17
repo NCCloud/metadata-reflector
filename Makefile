@@ -39,3 +39,11 @@ fmt: ## Run gofumpt.
 .PHONY: lint
 lint: fmt ## Run linter.
 	@./helper.sh lint
+
+.PHONY: generate
+generate: ## Generate mock objects.
+	@./helper.sh generate
+
+.PHONY: test
+test: generate ## Test the code.
+	@$(GO) test -coverprofile=coverage.out ./internal/... && $(GO) tool cover -func=coverage.out

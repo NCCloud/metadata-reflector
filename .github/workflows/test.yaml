@@ -1,0 +1,35 @@
+name: Test
+on:
+  pull_request:
+  push:
+permissions:
+  pull-requests: write
+  contents: write
+
+env:
+  GOPRIVATE: "github:com/NCCloud/*"
+
+jobs:
+  tests:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate
+        run: |
+          ./devops.sh generate
+          git diff --exit-code
+      - name: Coverage Report
+        uses: gwatts/go-coverage-action@v2
+        id: coverage
+        with:
+          coverage-threshold: 80
+          cover-pkg: ./...
+          ignore-pattern: |
+            .*cmd.*
+            .*mocks.*

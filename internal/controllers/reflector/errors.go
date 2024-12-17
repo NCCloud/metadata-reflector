@@ -6,4 +6,5 @@ var (
 	ErrUnparsableAnnotation = errors.New("annotation cannot be parsed")
 	ErrEmptyPodSelector     = errors.New("empty pod selector")
 	ErrPodNotFound          = errors.New("failed to find pods")
+	ErrPodsUpdateFailed     = errors.New("failed to update pods")
 )

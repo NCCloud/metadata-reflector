@@ -17,12 +17,15 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
 
-func NewControllerManager(config *common.Config, logger logr.Logger) manager.Manager {
+func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Manager, error) {
 	scheme := runtime.NewScheme()
 
 	common.Must(clientgoscheme.AddToScheme(scheme))
 
-	cacheOptions := GetCacheOptions(config, logger)
+	cacheOptions, cacheOptsErr := GetCacheOptions(config, logger)
+	if cacheOptsErr != nil {
+		return nil, cacheOptsErr
+	}
 
 	mgr, managerErr := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme: scheme,
@@ -38,13 +41,14 @@ func NewControllerManager(config *common.Config, logger logr.Logger) manager.Man
 
 	if managerErr != nil {
 		logger.Error(managerErr, "Failed to create new manager")
-		panic(managerErr)
+
+		return nil, managerErr
 	}
 
-	return mgr
+	return mgr, nil
 }
 
-func GetCacheOptions(config *common.Config, logger logr.Logger) cache.Options {
+func GetCacheOptions(config *common.Config, logger logr.Logger) (cache.Options, error) {
 	var labelParseErr error
 
 	rawDeploymentSelector := config.DeploymentSelector
@@ -58,7 +62,7 @@ func GetCacheOptions(config *common.Config, logger logr.Logger) cache.Options {
 				"Failed to construct deployment selector",
 				"selector", config.DeploymentSelector,
 			)
-			panic(labelParseErr)
+			return cache.Options{}, labelParseErr
 		}
 
 		logger.Info("DEPLOYMENT_SELECTOR is set, will only watch deployments matching it",
@@ -83,5 +87,5 @@ func GetCacheOptions(config *common.Config, logger logr.Logger) cache.Options {
 			},
 		},
 		DefaultNamespaces: namespaces,
-	}
+	}, nil
 }

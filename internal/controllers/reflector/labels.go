@@ -81,9 +81,9 @@ func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deplo
 	}
 
 	if !allUpdated {
-		r.logger.Info("Could not update all managed pods", "deployment", namespacedName)
+		r.logger.Error(ErrPodsUpdateFailed, "Could not update all managed pods", "deployment", namespacedName)
 
-		return ctrl.Result{Requeue: true}, nil
+		return ctrl.Result{}, ErrPodsUpdateFailed
 	}
 
 	return ctrl.Result{}, nil
@@ -140,9 +140,9 @@ func (r *Controller) unsetReflectedLabels(ctx context.Context, deployment *appsv
 	}
 
 	if !allUpdated {
-		r.logger.Info("Could not unset metadata, requeuing...", "deployment", deploymentName)
+		r.logger.Error(ErrPodsUpdateFailed, "Could not unset metadata from all managed pods", "deployment", deploymentName)
 
-		return ctrl.Result{Requeue: true}, nil
+		return ctrl.Result{}, ErrPodsUpdateFailed
 	}
 
 	return ctrl.Result{}, nil
