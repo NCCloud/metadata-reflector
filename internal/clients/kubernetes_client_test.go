@@ -64,17 +64,18 @@ func TestKubernetesClient_ListDeployments(t *testing.T) {
 	}
 
 	// simulate filtering logic in the mock
-	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
-		if depList, ok := list.(*appsv1.DeploymentList); ok {
-			// Load matching deployments into the mock
-			for _, deployment := range deploymentList {
-				if labelSelector.Matches(labels.Set(deployment.Labels)) {
-					depList.Items = append(depList.Items, deployment)
+	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).
+		Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
+			if depList, ok := list.(*appsv1.DeploymentList); ok {
+				// Load matching deployments into the mock
+				for _, deployment := range deploymentList {
+					if labelSelector.Matches(labels.Set(deployment.Labels)) {
+						depList.Items = append(depList.Items, deployment)
+					}
 				}
 			}
-		}
-		return nil
-	})
+			return nil
+		})
 
 	client := &kubernetesClient{
 		cacheClient: mockCache,
@@ -89,6 +90,8 @@ func TestKubernetesClient_ListDeployments(t *testing.T) {
 	assert.Nil(t, listErr)
 	assert.NotNil(t, result)
 	assert.Equal(t, expectedDeploymentList, result)
+
+	mockCache.AssertExpectations(t)
 }
 
 func TestKubernetesClient_ListPods(t *testing.T) {
@@ -124,18 +127,18 @@ func TestKubernetesClient_ListPods(t *testing.T) {
 		notMatchingPod,
 	}
 
-	// simulate filtering logic in the mock
-	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
-		if podList, ok := list.(*v1.PodList); ok {
-			// Load matching deployments into the mock
-			for _, pod := range allPodList {
-				if labelSelector.Matches(labels.Set(pod.Labels)) {
-					podList.Items = append(podList.Items, pod)
+	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).
+		Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
+			if podList, ok := list.(*v1.PodList); ok {
+				// Load matching deployments into the mock
+				for _, pod := range allPodList {
+					if labelSelector.Matches(labels.Set(pod.Labels)) {
+						podList.Items = append(podList.Items, pod)
+					}
 				}
 			}
-		}
-		return nil
-	})
+			return nil
+		})
 
 	client := &kubernetesClient{
 		cacheClient: mockCache,
@@ -150,6 +153,8 @@ func TestKubernetesClient_ListPods(t *testing.T) {
 	assert.Nil(t, listErr)
 	assert.NotNil(t, result)
 	assert.Equal(t, expectedPodList, result)
+
+	mockCache.AssertExpectations(t)
 }
 
 func TestKubernetesClient_GetDeployment(t *testing.T) {
@@ -158,7 +163,6 @@ func TestKubernetesClient_GetDeployment(t *testing.T) {
 	mockCache := new(mockCache.MockCache)
 	mockClient := new(mockClient.MockClient)
 
-	// Define the deployment to be returned by the mock
 	expectedDeployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "test-deployment",
@@ -171,13 +175,11 @@ func TestKubernetesClient_GetDeployment(t *testing.T) {
 		Namespace: "default",
 	}
 
-	// Convert to client.ObjectKey
 	objectKey := realClient.ObjectKey{
 		Name:      namespacedName.Name,
 		Namespace: namespacedName.Namespace,
 	}
 
-	// Mock the Get method
 	mockCache.On("Get", mock.Anything, objectKey, mock.AnythingOfType("*v1.Deployment")).
 		Run(func(args mock.Arguments) {
 			// Populate the deployment object as if it were fetched from the cache
@@ -185,7 +187,7 @@ func TestKubernetesClient_GetDeployment(t *testing.T) {
 				*dep = *expectedDeployment
 			}
 		}).
-		Return(nil) // Return no error
+		Return(nil)
 
 	client := &kubernetesClient{
 		cacheClient: mockCache,
@@ -199,8 +201,6 @@ func TestKubernetesClient_GetDeployment(t *testing.T) {
 	assert.NotNil(t, result)
 	assert.Equal(t, expectedDeployment, result)
 
-	// Ensure the mock's Get method was called exactly once
-	mockCache.AssertCalled(t, "Get", mock.Anything, objectKey, mock.AnythingOfType("*v1.Deployment"))
 	mockCache.AssertExpectations(t)
 }
 
@@ -239,7 +239,5 @@ func TestKubernetesClient_UpdatePod(t *testing.T) {
 
 	assert.Nil(t, updateErr)
 
-	// Ensure the mock's Update method was called exactly once
-	mockClient.AssertCalled(t, "Update", mock.Anything, mock.AnythingOfType("*v1.Pod"))
 	mockClient.AssertExpectations(t)
 }
