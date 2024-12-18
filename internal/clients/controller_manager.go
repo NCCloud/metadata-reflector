@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
+	"github.com/pkg/errors"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -24,7 +25,8 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 
 	cacheOptions, cacheOptsErr := GetCacheOptions(config, logger)
 	if cacheOptsErr != nil {
-		return nil, cacheOptsErr
+		return nil, errors.Wrap(cacheOptsErr, "failed to get cache options")
+
 	}
 
 	mgr, managerErr := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
@@ -40,7 +42,7 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 	})
 
 	if managerErr != nil {
-		return nil, managerErr
+		return nil, errors.Wrap(managerErr, "failed to get manager")
 	}
 
 	return mgr, nil
