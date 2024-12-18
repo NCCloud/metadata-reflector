@@ -13,7 +13,8 @@ We are grateful for your willingness to contribute to this project! We are inter
 ### Technical Requirements
 
 * Must follow [Golang best practices](https://go.dev/doc/effective_go)
-* Must pass CI jobs for linting. Please run `make lint` in the root of the project to know if the project complies with the requirements.
+* Must pass the CI job for linting. Please run `make lint` in the root of the project to know if the project complies with the requirements.
+* New code must be covered by tests and pass the corresponding CI job. Please run `make test` in the root of the project.
 * All changes require reviews from the responsible organization members before the merge.
 
 Once changes have been merged, the release will be done by the responsible organization members.

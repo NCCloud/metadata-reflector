@@ -20,7 +20,11 @@ func main() {
 	config := common.NewConfig()
 	logger := zap.New()
 
-	mgr := clients.NewControllerManager(config, logger)
+	mgr, mgrErr := clients.NewControllerManager(config, logger)
+	if mgrErr != nil {
+		logger.Error(mgrErr, "Failed to created the controller manager")
+		panic(mgrErr)
+	}
 
 	kubeClient := clients.NewKubernetesClient(mgr, config)
 	reflectorController := reflector.NewController(kubeClient, logger, config)
