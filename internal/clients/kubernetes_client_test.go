@@ -2,7 +2,6 @@ package clients
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
@@ -84,8 +83,6 @@ func TestKubernetesClient_ListDeployments(t *testing.T) {
 
 	result, listErr := client.ListDeployments(ctx, labelSelector)
 
-	fmt.Println(len(result.Items), labelSelector.String())
-
 	assert.Nil(t, listErr)
 	assert.NotNil(t, result)
 	assert.Equal(t, expectedDeploymentList, result)
@@ -145,8 +142,6 @@ func TestKubernetesClient_ListPods(t *testing.T) {
 	}
 
 	result, listErr := client.ListPods(ctx, labelSelector)
-
-	fmt.Println(len(result.Items), labelSelector.String())
 
 	assert.Nil(t, listErr)
 	assert.NotNil(t, result)

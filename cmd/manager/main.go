@@ -22,6 +22,7 @@ func main() {
 
 	mgr, mgrErr := clients.NewControllerManager(config, logger)
 	if mgrErr != nil {
+		logger.Error(mgrErr, "Failed to created the controller manager")
 		panic(mgrErr)
 	}
 

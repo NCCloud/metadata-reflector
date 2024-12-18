@@ -2,12 +2,12 @@ package reflector
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
+	"github.com/hashicorp/go-multierror"
 
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -17,7 +17,6 @@ import (
 // reflect configuration from deployment to managed pods.
 func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deployment,
 ) (ctrl.Result, error) {
-	namespacedName := fmt.Sprintf("%s/%s", deployment.Namespace, deployment.Name)
 	deploymentName := deployment.Name
 
 	// a map of reflector annotations present on the object
@@ -49,7 +48,7 @@ func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deplo
 		return ctrl.Result{}, podListError
 	}
 
-	allUpdated := true
+	var podUpdateErrors *multierror.Error
 
 	for _, pod := range pods.Items {
 		shouldUpdatePod := false
@@ -76,17 +75,11 @@ func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deplo
 				"pod", pod.Name,
 			)
 
-			allUpdated = false
+			podUpdateErrors = multierror.Append(podUpdateErrors, updateErr)
 		}
 	}
 
-	if !allUpdated {
-		r.logger.Error(ErrPodsUpdateFailed, "Could not update all managed pods", "deployment", namespacedName)
-
-		return ctrl.Result{}, ErrPodsUpdateFailed
-	}
-
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, podUpdateErrors.ErrorOrNil()
 }
 
 func (r *Controller) unsetReflectedLabels(ctx context.Context, deployment *appsv1.Deployment,
@@ -103,7 +96,7 @@ func (r *Controller) unsetReflectedLabels(ctx context.Context, deployment *appsv
 		return ctrl.Result{}, podListError
 	}
 
-	allUpdated := true
+	var podUpdateErrors *multierror.Error
 
 	for _, pod := range pods.Items {
 		annotationValue, hasReflectorAnnotation := pod.Annotations[ReflectorLabelsReflectedAnnotation]
@@ -135,17 +128,11 @@ func (r *Controller) unsetReflectedLabels(ctx context.Context, deployment *appsv
 				"pod", pod.Name,
 			)
 
-			allUpdated = false
+			podUpdateErrors = multierror.Append(podUpdateErrors, updateErr)
 		}
 	}
 
-	if !allUpdated {
-		r.logger.Error(ErrPodsUpdateFailed, "Could not unset metadata from all managed pods", "deployment", deploymentName)
-
-		return ctrl.Result{}, ErrPodsUpdateFailed
-	}
-
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, podUpdateErrors.ErrorOrNil()
 }
 
 // reflect a list of labels from deployment to the pod.

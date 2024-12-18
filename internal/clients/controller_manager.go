@@ -40,8 +40,6 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 	})
 
 	if managerErr != nil {
-		logger.Error(managerErr, "Failed to create new manager")
-
 		return nil, managerErr
 	}
 
