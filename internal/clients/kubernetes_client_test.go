@@ -67,7 +67,6 @@ func TestKubernetesClient_ListDeployments(t *testing.T) {
 	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).
 		Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
 			if depList, ok := list.(*appsv1.DeploymentList); ok {
-				// Load matching deployments into the mock
 				for _, deployment := range deploymentList {
 					if labelSelector.Matches(labels.Set(deployment.Labels)) {
 						depList.Items = append(depList.Items, deployment)
@@ -130,7 +129,6 @@ func TestKubernetesClient_ListPods(t *testing.T) {
 	mockCache.On("List", mock.Anything, mock.Anything, mock.Anything).
 		Return(func(ctx context.Context, list realClient.ObjectList, opts ...realClient.ListOption) error {
 			if podList, ok := list.(*v1.PodList); ok {
-				// Load matching deployments into the mock
 				for _, pod := range allPodList {
 					if labelSelector.Matches(labels.Set(pod.Labels)) {
 						podList.Items = append(podList.Items, pod)
