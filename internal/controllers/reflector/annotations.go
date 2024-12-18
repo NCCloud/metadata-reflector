@@ -17,6 +17,10 @@ func (r *Controller) getReflectedAnnotations(labelsToReflect string) map[string]
 func (r *Controller) setAnnotations(annotations map[string]string, pod *v1.Pod) bool {
 	podUpdated := false
 
+	if pod.Annotations == nil {
+		pod.Annotations = make(map[string]string)
+	}
+
 	for key, value := range annotations {
 		annotationValue, annotationOk := pod.Annotations[key]
 		if annotationOk && annotationValue == value {

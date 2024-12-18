@@ -70,6 +70,40 @@ func TestController_setAnnotations(t *testing.T) {
 	assert.Equal(t, expectedAnnotations, pod.Annotations, "pod annotations should match the expected annotations")
 }
 
+func TestController_setAnnotationsToPodWithoutAnyExistingOnes(t *testing.T) {
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
+
+	logger := zap.New()
+	config := &common.Config{}
+
+	controller := &Controller{
+		kubeClient: mockClient,
+		logger:     logger,
+		config:     config,
+	}
+
+	annotationsToSet := map[string]string{
+		"annotation1": "value1",
+		"annotation2": "value2",
+	}
+
+	pod := &v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "test-pod",
+		},
+	}
+
+	expectedAnnotations := map[string]string{
+		"annotation1": "value1",
+		"annotation2": "value2",
+	}
+
+	podUpdated := controller.setAnnotations(annotationsToSet, pod)
+
+	assert.True(t, podUpdated, "pod with no existing annotations should be updated")
+	assert.Equal(t, expectedAnnotations, pod.Annotations, "pod annotations should match the expected annotations")
+}
+
 func TestController_unsetAnnotations(t *testing.T) {
 	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
