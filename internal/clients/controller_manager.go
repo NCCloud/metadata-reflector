@@ -26,7 +26,6 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 	cacheOptions, cacheOptsErr := GetCacheOptions(config, logger)
 	if cacheOptsErr != nil {
 		return nil, errors.Wrap(cacheOptsErr, "failed to get cache options")
-
 	}
 
 	mgr, managerErr := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
