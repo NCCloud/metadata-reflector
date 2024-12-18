@@ -68,7 +68,6 @@ func TestController_setAnnotations(t *testing.T) {
 
 	assert.True(t, podUpdated, "pod annotations should be updated")
 	assert.Equal(t, expectedAnnotations, pod.Annotations, "pod annotations should match the expected annotations")
-
 }
 
 func TestController_unsetAnnotations(t *testing.T) {

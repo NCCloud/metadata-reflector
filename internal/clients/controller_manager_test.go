@@ -58,7 +58,6 @@ func TestNewControllerManager(t *testing.T) {
 
 	assert.NotNil(t, mgr)
 	assert.Equal(t, mockMgr, mgr) // Ensure the returned manager matches the mock
-
 }
 
 func TestGetCacheOptions_SelectorAndNamespacesConfigured(t *testing.T) {
@@ -87,7 +86,6 @@ func TestGetCacheOptions_SelectorAndNamespacesConfigured(t *testing.T) {
 	assert.Equal(t, rawSelector, byObjectDeployment.Label.String())
 	assert.Contains(t, options.DefaultNamespaces, "default")
 	assert.Contains(t, options.DefaultNamespaces, "test-namespace")
-
 }
 
 func TestGetCacheOptions_EmptyConfiguration(t *testing.T) {
@@ -113,7 +111,6 @@ func TestGetCacheOptions_EmptyConfiguration(t *testing.T) {
 
 	assert.Empty(t, byObjectDeployment.Label.String())
 	assert.Empty(t, options.DefaultNamespaces)
-
 }
 
 func TestGetCacheOptions_InvalidConfiguration(t *testing.T) {

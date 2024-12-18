@@ -504,7 +504,6 @@ func TestController_unsetReflectedLabels(t *testing.T) {
 }
 
 func TestController_setLabels(t *testing.T) {
-
 	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
@@ -541,7 +540,6 @@ func TestController_setLabels(t *testing.T) {
 }
 
 func TestController_unsetLabels(t *testing.T) {
-
 	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
@@ -576,7 +574,6 @@ func TestController_unsetLabels(t *testing.T) {
 }
 
 func TestController_unsetExcessiveLabels(t *testing.T) {
-
 	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()

@@ -62,6 +62,7 @@ func GetCacheOptions(config *common.Config, logger logr.Logger) (cache.Options, 
 				"Failed to construct deployment selector",
 				"selector", config.DeploymentSelector,
 			)
+
 			return cache.Options{}, labelParseErr
 		}
 
