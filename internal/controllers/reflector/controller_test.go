@@ -19,7 +19,6 @@ import (
 )
 
 func TestNewController(t *testing.T) {
-
 	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()

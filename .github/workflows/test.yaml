@@ -6,9 +6,6 @@ permissions:
   pull-requests: write
   contents: write
 
-env:
-  GOPRIVATE: "github:com/NCCloud/*"
-
 jobs:
   tests:
     name: Test

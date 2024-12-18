@@ -46,4 +46,8 @@ generate: ## Generate mock objects.
 
 .PHONY: test
 test: generate ## Test the code.
-	@$(GO) test -coverprofile=coverage.out ./internal/... && $(GO) tool cover -func=coverage.out
+	@$(GO) test -coverprofile=coverage.out -cover ./internal/...
+
+.PHONY: test-coverage
+test-coverage: test ## Check the unit test coverage.
+	@$(GO) tool cover -func=coverage.out

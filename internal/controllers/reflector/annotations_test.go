@@ -12,13 +12,13 @@ import (
 )
 
 func TestController_getReflectedAnnotations(t *testing.T) {
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -35,13 +35,13 @@ func TestController_getReflectedAnnotations(t *testing.T) {
 }
 
 func TestController_setAnnotations(t *testing.T) {
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -72,13 +72,13 @@ func TestController_setAnnotations(t *testing.T) {
 }
 
 func TestController_unsetAnnotations(t *testing.T) {
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -100,6 +100,6 @@ func TestController_unsetAnnotations(t *testing.T) {
 
 	annotationsUnset := controller.unsetAnnotations(annotationsToUnset, pod)
 
-	assert.True(t, annotationsUnset, "annotationsUnset should be true because at least one annotation was removed")
+	assert.True(t, annotationsUnset, "annotationsUnset should be true because annotation1 was removed")
 	assert.Equal(t, expectedAnnotations, pod.Annotations, "remaining annotations should match the expected annotations")
 }

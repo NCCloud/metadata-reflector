@@ -9,28 +9,25 @@ import (
 )
 
 func TestMust(t *testing.T) {
-
-	errorPossibleFunction := func(a bool) error {
+	errorPossibleFunction := func() error {
 		return nil
 	}
 
-	Must(errorPossibleFunction(true))
+	Must(errorPossibleFunction())
 }
 
 func TestMust_PanicsOnError(t *testing.T) {
-
-	errorFunction := func(a bool) error {
+	errorFunction := func() error {
 		return errors.New("error occured")
 	}
 	defer func() { _ = recover() }()
 
-	Must(errorFunction(true))
+	Must(errorFunction())
 
 	t.Errorf("did not panic")
 }
 
 func TestMustReturn(t *testing.T) {
-
 	errorPossibleFunction := func(a bool) (bool, error) {
 		return a, nil
 	}
@@ -41,7 +38,6 @@ func TestMustReturn(t *testing.T) {
 }
 
 func TestMustReturn_PanicsOnError(t *testing.T) {
-
 	errorPossibleFunction := func(a bool) (bool, error) {
 		return a, errors.New("error occured")
 	}
@@ -56,7 +52,6 @@ func TestMustReturn_PanicsOnError(t *testing.T) {
 }
 
 func TestPointerTo(t *testing.T) {
-
 	value := 1
 
 	result := PointerTo(value)

@@ -7,7 +7,6 @@ import (
 )
 
 func TestNewConfig(t *testing.T) {
-
 	config := NewConfig()
 
 	assert.NotEqual(t, *config, Config{})

@@ -208,7 +208,6 @@ func TestKubernetesClient_UpdatePod(t *testing.T) {
 	ctx := context.Background()
 	mockClient := new(mockClient.MockClient)
 
-	// Define the pod to be updated
 	podToUpdate := v1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "test-pod",
@@ -224,15 +223,13 @@ func TestKubernetesClient_UpdatePod(t *testing.T) {
 		},
 	}
 
-	// Mock the Update method
 	mockClient.On("Update", mock.Anything, mock.AnythingOfType("*v1.Pod")).
 		Run(func(args mock.Arguments) {
-			// Simulate the update logic if needed
 			if pod, ok := args.Get(1).(*v1.Pod); ok {
 				pod.Labels = map[string]string{"new-label": "true"} // Example modification
 			}
 		}).
-		Return(nil) // Return no error
+		Return(nil)
 
 	client := &kubernetesClient{
 		client: mockClient,

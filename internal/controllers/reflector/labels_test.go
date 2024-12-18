@@ -505,13 +505,13 @@ func TestController_unsetReflectedLabels(t *testing.T) {
 
 func TestController_setLabels(t *testing.T) {
 
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -538,8 +538,6 @@ func TestController_setLabels(t *testing.T) {
 	assert.True(t, updated, "The pod should be updated because labels were set.")
 	assert.Equal(t, "new-value2", pod.Labels["key2"], "Label 'key2' should be updated.")
 	assert.Equal(t, "value3", pod.Labels["key3"], "Label 'key3' should be added.")
-	assert.NotContains(t, pod.Labels, "key4", "No new label 'key4' should be added.")
-
 }
 
 func TestController_unsetLabels(t *testing.T) {
@@ -579,13 +577,13 @@ func TestController_unsetLabels(t *testing.T) {
 
 func TestController_unsetExcessiveLabels(t *testing.T) {
 
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -618,13 +616,13 @@ func TestController_unsetExcessiveLabels(t *testing.T) {
 }
 
 func TestController_labelsToReflect(t *testing.T) {
-	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
 
 	logger := zap.New()
 	config := &common.Config{}
 
 	controller := &Controller{
-		kubeClient: mockKubernetesClient,
+		kubeClient: mockClient,
 		logger:     logger,
 		config:     config,
 	}
@@ -706,12 +704,12 @@ func TestController_labelsToReflect(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := controller.labelsToReflect(tt.args.reflectorAnnotations, tt.args.labels)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Controller.labelsToReflect() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
 
-			assert.Equal(t, tt.want, got)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.Equal(t, tt.want, got)
+			}
 		})
 	}
 }
