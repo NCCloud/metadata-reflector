@@ -539,6 +539,37 @@ func TestController_setLabels(t *testing.T) {
 	assert.Equal(t, "value3", pod.Labels["key3"], "Label 'key3' should be added.")
 }
 
+func TestController_setLabelsToPodWithoutAnyExistingOnes(t *testing.T) {
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
+
+	logger := zap.New()
+	config := &common.Config{}
+
+	controller := &Controller{
+		kubeClient: mockClient,
+		logger:     logger,
+		config:     config,
+	}
+
+	pod := &v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "test-pod",
+			Namespace: "default",
+		},
+	}
+
+	labelsToSet := map[string]string{
+		"key1": "value1", // new label, should be added
+		"key3": "value3", // new label, should be added
+	}
+
+	updated := controller.setLabels(labelsToSet, pod)
+
+	assert.True(t, updated, "The pod should be updated because labels were set.")
+	assert.Equal(t, "value1", pod.Labels["key1"], "Label 'key1' should be added.")
+	assert.Equal(t, "value3", pod.Labels["key3"], "Label 'key3' should be added.")
+}
+
 func TestController_unsetLabels(t *testing.T) {
 	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
 
@@ -571,6 +602,30 @@ func TestController_unsetLabels(t *testing.T) {
 
 	assert.True(t, anyLabelDeleted, "Some labels should be deleted.")
 	assert.Equal(t, map[string]string{"key1": "value1"}, pod.Labels, "Pod labels should be different.")
+}
+
+func TestController_unsetLabelsFromPodWithoutAnyExistingOnes(t *testing.T) {
+	mockKubernetesClient := new(mockKubernetesClient.MockKubernetesClient)
+
+	logger := zap.New()
+	config := &common.Config{}
+
+	controller := &Controller{
+		kubeClient: mockKubernetesClient,
+		logger:     logger,
+		config:     config,
+	}
+
+	pod := &v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "test-pod",
+			Namespace: "default",
+		},
+	}
+
+	anyLabelDeleted := controller.unsetLabels(labelsToUnset, pod)
+
+	assert.False(t, anyLabelDeleted, "No labels should be updated")
 }
 
 func TestController_unsetExcessiveLabels(t *testing.T) {

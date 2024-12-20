@@ -136,3 +136,27 @@ func TestController_unsetAnnotations(t *testing.T) {
 	assert.True(t, annotationsUnset, "annotationsUnset should be true because annotation1 was removed")
 	assert.Equal(t, expectedAnnotations, pod.Annotations, "remaining annotations should match the expected annotations")
 }
+
+func TestController_unsetAnnotationsFromPodWithoutAnyExistingOnes(t *testing.T) {
+	mockClient := new(mockKubernetesClient.MockKubernetesClient)
+
+	logger := zap.New()
+	config := &common.Config{}
+
+	controller := &Controller{
+		kubeClient: mockClient,
+		logger:     logger,
+		config:     config,
+	}
+
+	annotationsToUnset := []string{"annotation1", "annotation3"}
+	pod := &v1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "test-pod",
+		},
+	}
+
+	annotationsUnset := controller.unsetAnnotations(annotationsToUnset, pod)
+
+	assert.False(t, annotationsUnset, "annotationsUnset should be false because there are no annotations to unset")
+}
