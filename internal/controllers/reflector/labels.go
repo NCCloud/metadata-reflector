@@ -165,6 +165,10 @@ func (r *Controller) setLabels(labels map[string]string, pod *v1.Pod) bool {
 func (r *Controller) unsetLabels(labels []string, pod *v1.Pod) bool {
 	anyLabelDeleted := false
 
+	if pod.Labels == nil {
+		return anyLabelDeleted
+	}
+
 	for _, label := range labels {
 		if _, ok := pod.Labels[label]; !ok {
 			continue

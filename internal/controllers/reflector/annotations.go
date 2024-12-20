@@ -41,6 +41,10 @@ func (r *Controller) setAnnotations(annotations map[string]string, pod *v1.Pod) 
 func (r *Controller) unsetAnnotations(annotations []string, pod *v1.Pod) bool {
 	anyAnnotationUnset := false
 
+	if pod.Annotations == nil {
+		return anyAnnotationUnset
+	}
+
 	for _, annotation := range annotations {
 		if _, annotationExists := pod.Annotations[annotation]; !annotationExists {
 			continue
