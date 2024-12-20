@@ -623,6 +623,11 @@ func TestController_unsetLabelsFromPodWithoutAnyExistingOnes(t *testing.T) {
 		},
 	}
 
+	labelsToUnset := []string{
+		"key2",
+		"key3", // label not present in pod, so nothing should be deleted
+	}
+
 	anyLabelDeleted := controller.unsetLabels(labelsToUnset, pod)
 
 	assert.False(t, anyLabelDeleted, "No labels should be updated")
