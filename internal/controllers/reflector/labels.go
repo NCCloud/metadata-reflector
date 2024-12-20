@@ -140,6 +140,10 @@ func (r *Controller) unsetReflectedLabels(ctx context.Context, deployment *appsv
 func (r *Controller) setLabels(labels map[string]string, pod *v1.Pod) bool {
 	podUpdated := false
 
+	if pod.Labels == nil {
+		pod.Labels = make(map[string]string)
+	}
+
 	for key, value := range labels {
 		podLabelValue, ok := pod.Labels[key]
 		if ok && value == podLabelValue {
@@ -160,6 +164,10 @@ func (r *Controller) setLabels(labels map[string]string, pod *v1.Pod) bool {
 // returns whether any label was unset.
 func (r *Controller) unsetLabels(labels []string, pod *v1.Pod) bool {
 	anyLabelDeleted := false
+
+	if pod.Labels == nil {
+		return anyLabelDeleted
+	}
 
 	for _, label := range labels {
 		if _, ok := pod.Labels[label]; !ok {

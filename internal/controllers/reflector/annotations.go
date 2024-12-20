@@ -17,6 +17,10 @@ func (r *Controller) getReflectedAnnotations(labelsToReflect string) map[string]
 func (r *Controller) setAnnotations(annotations map[string]string, pod *v1.Pod) bool {
 	podUpdated := false
 
+	if pod.Annotations == nil {
+		pod.Annotations = make(map[string]string)
+	}
+
 	for key, value := range annotations {
 		annotationValue, annotationOk := pod.Annotations[key]
 		if annotationOk && annotationValue == value {
@@ -36,6 +40,10 @@ func (r *Controller) setAnnotations(annotations map[string]string, pod *v1.Pod) 
 // returns whether any annotation was unset.
 func (r *Controller) unsetAnnotations(annotations []string, pod *v1.Pod) bool {
 	anyAnnotationUnset := false
+
+	if pod.Annotations == nil {
+		return anyAnnotationUnset
+	}
 
 	for _, annotation := range annotations {
 		if _, annotationExists := pod.Annotations[annotation]; !annotationExists {
