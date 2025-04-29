@@ -4,7 +4,7 @@ KIND ?= kind
 DOCKER ?= docker
 DOCKER_ARGS ?= --load
 APP_NAME ?= ghcr.io/nccloud/metadata-reflector
-TAG ?= 0.2.1-dev
+TAG ?= 0.3.0-dev
 IMG ?= ${APP_NAME}:${TAG}
 KIND_IMAGE ?= kindest/node:v1.33.0
 
