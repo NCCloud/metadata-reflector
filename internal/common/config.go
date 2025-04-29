@@ -23,6 +23,8 @@ type Config struct {
 	HealthCheckPort int `env:"HEALTH_CHECK_PORT" envDefault:"8083"`
 	// whether to enable leader election
 	EnableLeaderElection bool `env:"ENABLE_LEADER_ELECTION" envDefault:"false"`
+	// the number of reconciliations the controller can perform concurrently
+	MaxConcurrentReconciles int `env:"MAX_CONCURRENT_RECONCILES" envDefault:"1"`
 }
 
 func NewConfig() *Config {

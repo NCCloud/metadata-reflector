@@ -14,6 +14,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	controllerConfig "sigs.k8s.io/controller-runtime/pkg/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
@@ -38,6 +39,9 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 		LeaderElection:         config.EnableLeaderElection,
 		LeaderElectionID:       "metadata-reflector-leader.spaceship.com",
 		Cache:                  cacheOptions,
+		Controller: controllerConfig.Controller{
+			MaxConcurrentReconciles: config.MaxConcurrentReconciles,
+		},
 	})
 
 	if managerErr != nil {

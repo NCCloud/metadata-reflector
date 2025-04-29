@@ -13,6 +13,11 @@ import (
 )
 
 func (r *Controller) reconcileLabels(ctx context.Context, deployment *appsv1.Deployment) (ctrl.Result, error) {
+	r.logger.Info("Starting label reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+	defer r.logger.Info("Finished label reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+
 	var (
 		labelReflectResult ctrl.Result
 		labelReflectError  error

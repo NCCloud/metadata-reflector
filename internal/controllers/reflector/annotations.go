@@ -12,6 +12,11 @@ import (
 )
 
 func (r *Controller) reconcileAnnotations(ctx context.Context, deployment *appsv1.Deployment) (ctrl.Result, error) {
+	r.logger.Info("Starting annotation reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+	defer r.logger.Info("Finished annotation reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+
 	var (
 		annotationReflectResult ctrl.Result
 		annotationReflectError  error
