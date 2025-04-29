@@ -48,25 +48,20 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	var reflectorErrors *multierror.Error
 
-	var (
-		labelReflectResult ctrl.Result
-		labelReflectError  error
-	)
+	labelReflectResult, labelReflectError := r.reconcileLabels(ctx, deployment)
 
-	if common.MapHasPrefix(ReflectorLabelsAnnotationDomain, deployment.Annotations) {
-		labelReflectResult, labelReflectError = r.reflectLabels(ctx, deployment)
-	} else {
-		labelReflectResult, labelReflectError = r.unsetReflectedLabels(ctx, deployment)
-	}
+	annReflectResult, annReflectError := r.reconcileAnnotations(ctx, deployment)
+
+	reflectorErrors = multierror.Append(reflectorErrors, labelReflectError, annReflectError)
 
 	// if the error is not nil, it always takes precedence over the result
 	// the idea is not to requeue after any error as there can be other independent phases
 	// but also maintain the possibility to requeue now/after some time when there was no error
 	// and the result explicitly states that we need to requeue
-	if labelReflectError != nil {
-		reflectorErrors = multierror.Append(reflectorErrors, labelReflectError)
-	} else if r.shouldRequeueNow(labelReflectResult) {
+	if r.shouldRequeueNow(labelReflectResult) {
 		return labelReflectResult, labelReflectError
+	} else if r.shouldRequeueNow(annReflectResult) {
+		return annReflectResult, annReflectError
 	}
 
 	return ctrl.Result{}, reflectorErrors.ErrorOrNil()

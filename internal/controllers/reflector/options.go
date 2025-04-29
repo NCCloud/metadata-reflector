@@ -4,21 +4,27 @@ import "fmt"
 
 var ReflectorAnnotationDomain = "metadata-reflector.spaceship.com"
 
-// operations to get labels, e.g. `list`, `regex`, etc.
+// operations to get labels & annotations, e.g. `list`, `regex`, etc.
 var (
-	ReflectorLabelsList  = "list"
-	ReflectorLabelsRegex = "regex"
+	ReflectorOperationList  = "list"
+	ReflectorOperationRegex = "regex"
 )
 
 var (
-	ReflectorLabelsAnnotationDomain = fmt.Sprintf("labels.%s", ReflectorAnnotationDomain)
-
-	ReflectorLabelsListAnnotation = fmt.Sprintf(
-		"%s/%s", ReflectorLabelsAnnotationDomain, ReflectorLabelsList)
-
-	ReflectorLabelsRegexAnnotation = fmt.Sprintf(
-		"%s/%s", ReflectorLabelsAnnotationDomain, ReflectorLabelsRegex)
+	ReflectorLabelsAnnotationDomain      = fmt.Sprintf("labels.%s", ReflectorAnnotationDomain)
+	ReflectorAnnotationsAnnotationDomain = fmt.Sprintf("annotations.%s", ReflectorAnnotationDomain)
 
 	// a list of annotations that were added to the object by the controller.
 	ReflectorLabelsReflectedAnnotation = fmt.Sprintf("%s/%s", ReflectorLabelsAnnotationDomain, "reflected-list")
+
+	ReflectorAnnotationsReflectedAnnotation = fmt.Sprintf(
+		"%s/%s", ReflectorAnnotationsAnnotationDomain, "reflected-list")
 )
+
+func supportedAnnotationDomains() []string {
+	return []string{ReflectorLabelsAnnotationDomain, ReflectorAnnotationsAnnotationDomain}
+}
+
+func supportedOperations() []string {
+	return []string{ReflectorOperationList, ReflectorOperationRegex}
+}

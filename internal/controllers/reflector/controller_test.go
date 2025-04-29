@@ -3,6 +3,7 @@ package reflector
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
@@ -57,7 +58,7 @@ func TestController_Reconcile(t *testing.T) {
 							Name:      "test-deployment",
 							Namespace: "default",
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "label1",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "label1",
 							},
 							Labels: map[string]string{
 								"label1": "value1",
@@ -109,7 +110,7 @@ func TestController_Reconcile(t *testing.T) {
 							Name:      "test-deployment",
 							Namespace: "default",
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "",
 							},
 							Labels: map[string]string{
 								"label1": "value1",
@@ -134,7 +135,7 @@ func TestController_Reconcile(t *testing.T) {
 										"label1": "value1",
 									},
 									Annotations: map[string]string{
-										"labels.metadata-reflector.spaceship.com/reflected-list": "label1",
+										fmt.Sprintf("%s/reflected-list", ReflectorLabelsAnnotationDomain): "label1",
 									},
 								},
 							},
@@ -161,6 +162,154 @@ func TestController_Reconcile(t *testing.T) {
 			mockSetup: func(mockClient *mockKubernetesClient.MockKubernetesClient) {
 				mockClient.On("GetDeployment", mock.Anything, mock.Anything).
 					Return(&appsv1.Deployment{}, errors.New("failed to get deployment"))
+			},
+			want:    ctrl.Result{},
+			wantErr: true,
+		},
+		{
+			name: "Successful reconciliation with annotation reflection",
+			args: args{
+				req: ctrl.Request{
+					NamespacedName: types.NamespacedName{
+						Namespace: "default",
+						Name:      "test-deployment",
+					},
+				},
+			},
+			mockSetup: func(mockClient *mockKubernetesClient.MockKubernetesClient) {
+				mockClient.On("GetDeployment", mock.Anything, mock.Anything).
+					Return(&appsv1.Deployment{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "test-deployment",
+							Namespace: "default",
+							Annotations: map[string]string{
+								fmt.Sprintf("%s/list", ReflectorAnnotationsAnnotationDomain): "annotation1",
+								"annotation1": "value1",
+							},
+						},
+						Spec: appsv1.DeploymentSpec{
+							Selector: &metav1.LabelSelector{
+								MatchLabels: map[string]string{"app": "test"},
+							},
+						},
+					}, nil)
+
+				// Mock managed pods
+				mockClient.On("ListPods", mock.Anything, mock.Anything).
+					Return(&v1.PodList{
+						Items: []v1.Pod{
+							{
+								ObjectMeta: metav1.ObjectMeta{
+									Name:        "pod1",
+									Namespace:   "default",
+									Labels:      map[string]string{},
+									Annotations: map[string]string{},
+								},
+							},
+						},
+					}, nil)
+
+				// Mock pod updates
+				mockClient.On("UpdatePod", mock.Anything, mock.Anything).
+					Return(nil)
+			},
+			want:    ctrl.Result{},
+			wantErr: false,
+		},
+		{
+			name: "Successful reconciliation with annotation removal",
+			args: args{
+				req: ctrl.Request{
+					NamespacedName: types.NamespacedName{
+						Namespace: "default",
+						Name:      "test-deployment",
+					},
+				},
+			},
+			mockSetup: func(mockClient *mockKubernetesClient.MockKubernetesClient) {
+				mockClient.On("GetDeployment", mock.Anything, mock.Anything).
+					Return(&appsv1.Deployment{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "test-deployment",
+							Namespace: "default",
+							Annotations: map[string]string{
+								fmt.Sprintf("%s/list", ReflectorAnnotationsAnnotationDomain): "",
+							},
+						},
+						Spec: appsv1.DeploymentSpec{
+							Selector: &metav1.LabelSelector{
+								MatchLabels: map[string]string{"app": "test"},
+							},
+						},
+					}, nil)
+
+				// Mock managed pods
+				mockClient.On("ListPods", mock.Anything, mock.Anything).
+					Return(&v1.PodList{
+						Items: []v1.Pod{
+							{
+								ObjectMeta: metav1.ObjectMeta{
+									Name:      "pod1",
+									Namespace: "default",
+									Annotations: map[string]string{
+										fmt.Sprintf("%s/reflected-list", ReflectorAnnotationsAnnotationDomain): "annotation1",
+										"annotation1": "value1",
+									},
+								},
+							},
+						},
+					}, nil)
+
+				// Mock pod updates
+				mockClient.On("UpdatePod", mock.Anything, mock.Anything).
+					Return(nil)
+			},
+			want:    ctrl.Result{},
+			wantErr: false,
+		},
+		{
+			name: "Failed reconciliation of annotation reflection",
+			args: args{
+				req: ctrl.Request{
+					NamespacedName: types.NamespacedName{
+						Namespace: "default",
+						Name:      "test-deployment",
+					},
+				},
+			},
+			mockSetup: func(mockClient *mockKubernetesClient.MockKubernetesClient) {
+				mockClient.On("GetDeployment", mock.Anything, mock.Anything).
+					Return(&appsv1.Deployment{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "test-deployment",
+							Namespace: "default",
+							Annotations: map[string]string{
+								fmt.Sprintf("%s/invalid", ReflectorAnnotationsAnnotationDomain): "annotation1",
+							},
+						},
+						Spec: appsv1.DeploymentSpec{
+							Selector: &metav1.LabelSelector{
+								MatchLabels: map[string]string{"app": "test"},
+							},
+						},
+					}, nil)
+
+				// Mock managed pods
+				mockClient.On("ListPods", mock.Anything, mock.Anything).
+					Return(&v1.PodList{
+						Items: []v1.Pod{
+							{
+								ObjectMeta: metav1.ObjectMeta{
+									Name:      "pod1",
+									Namespace: "default",
+								},
+							},
+						},
+					}, nil)
+
+				// Mock pod updates
+				mockClient.On("UpdatePod", mock.Anything, mock.Anything).
+					Return(nil)
 			},
 			want:    ctrl.Result{},
 			wantErr: true,
@@ -337,7 +486,7 @@ func TestController_FilterCreateEvents(t *testing.T) {
 					Object: &appsv1.Deployment{
 						ObjectMeta: metav1.ObjectMeta{
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "key",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "key",
 							},
 						},
 					},
@@ -433,14 +582,14 @@ func TestController_FilterUpdateEvents(t *testing.T) {
 					ObjectNew: &appsv1.Deployment{
 						ObjectMeta: metav1.ObjectMeta{
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "new-value",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "new-value",
 							},
 						},
 					},
 					ObjectOld: &appsv1.Deployment{
 						ObjectMeta: metav1.ObjectMeta{
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "old-value",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "old-value",
 							},
 						},
 					},
@@ -455,7 +604,7 @@ func TestController_FilterUpdateEvents(t *testing.T) {
 					ObjectNew: &appsv1.Deployment{
 						ObjectMeta: metav1.ObjectMeta{
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "value",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "value",
 							},
 						},
 						Status: appsv1.DeploymentStatus{
@@ -481,7 +630,7 @@ func TestController_FilterUpdateEvents(t *testing.T) {
 								"new-label": "value",
 							},
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "value",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "value",
 							},
 						},
 					},
@@ -491,7 +640,7 @@ func TestController_FilterUpdateEvents(t *testing.T) {
 								"old-label": "value",
 							},
 							Annotations: map[string]string{
-								"labels.metadata-reflector.spaceship.com/list": "value",
+								fmt.Sprintf("%s/list", ReflectorLabelsAnnotationDomain): "value",
 							},
 						},
 					},
