@@ -23,7 +23,7 @@ func (r *Controller) validateAnnotation(annotation string) error {
 	annDomains := supportedAnnotationDomains()
 
 	if !slices.Contains(annDomains, annotationKeyParts[0]) {
-		r.logger.Error(ErrUnparsableOperation,
+		r.logger.Error(ErrUnparsableAnnotation,
 			"Annotation does not contain a valid annotation domain",
 			"annotation", annotation, "supportedOperations", annDomains,
 		)
