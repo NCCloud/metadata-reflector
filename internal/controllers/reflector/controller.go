@@ -10,12 +10,9 @@ import (
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-
-	v1 "k8s.io/api/core/v1"
 )
 
 type Controller struct {
@@ -48,76 +45,23 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	var reflectorErrors *multierror.Error
 
-	var (
-		labelReflectResult ctrl.Result
-		labelReflectError  error
-	)
+	labelReflectResult, labelReflectError := r.reconcileLabels(ctx, deployment)
 
-	if common.MapHasPrefix(ReflectorLabelsAnnotationDomain, deployment.Annotations) {
-		labelReflectResult, labelReflectError = r.reflectLabels(ctx, deployment)
-	} else {
-		labelReflectResult, labelReflectError = r.unsetReflectedLabels(ctx, deployment)
-	}
+	annReflectResult, annReflectError := r.reconcileAnnotations(ctx, deployment)
+
+	reflectorErrors = multierror.Append(reflectorErrors, labelReflectError, annReflectError)
 
 	// if the error is not nil, it always takes precedence over the result
 	// the idea is not to requeue after any error as there can be other independent phases
 	// but also maintain the possibility to requeue now/after some time when there was no error
 	// and the result explicitly states that we need to requeue
-	if labelReflectError != nil {
-		reflectorErrors = multierror.Append(reflectorErrors, labelReflectError)
-	} else if r.shouldRequeueNow(labelReflectResult) {
+	if r.shouldRequeueNow(labelReflectResult) {
 		return labelReflectResult, labelReflectError
+	} else if r.shouldRequeueNow(annReflectResult) {
+		return annReflectResult, annReflectError
 	}
 
 	return ctrl.Result{}, reflectorErrors.ErrorOrNil()
-}
-
-func (r *Controller) shouldRequeueNow(result ctrl.Result) bool {
-	if result.Requeue || result.RequeueAfter != 0 {
-		return true
-	}
-
-	return false
-}
-
-// get a list of pods managed by deployment.
-func (r *Controller) getManagedPods(
-	ctx context.Context, deployment *appsv1.Deployment,
-) (*v1.PodList, error) {
-	deploymentName := deployment.Name
-
-	podSelector, selectorErr := metav1.LabelSelectorAsSelector(deployment.Spec.Selector)
-	if selectorErr != nil {
-		r.logger.Error(selectorErr,
-			"Failed to get managed pods", "deployment", deploymentName)
-
-		return nil, selectorErr
-	}
-
-	if podSelector.Empty() {
-		r.logger.Error(ErrEmptyPodSelector,
-			"Cannot get managed pods as the selector would match everything",
-			"deployment", deploymentName)
-
-		return nil, ErrEmptyPodSelector
-	}
-
-	pods, podListError := r.kubeClient.ListPods(ctx, podSelector)
-	if podListError != nil {
-		return nil, podListError
-	}
-
-	if len(pods.Items) == 0 {
-		r.logger.Error(ErrPodNotFound, "Could not find pods for deployment",
-			"deployment", deploymentName, "selector", podSelector.String())
-
-		return nil, ErrPodNotFound
-	}
-
-	r.logger.Info("Found Managed pods",
-		"count", len(pods.Items), "selector", podSelector.String())
-
-	return pods, nil
 }
 
 func (r *Controller) FilterCreateEvents(e event.CreateEvent) bool {
@@ -194,4 +138,12 @@ func (r *Controller) SetupWithManager(mgr ctrl.Manager) error {
 		For(&appsv1.Deployment{}).
 		WithEventFilter(predicate).
 		Complete(r)
+}
+
+func (r *Controller) shouldRequeueNow(result ctrl.Result) bool {
+	if result.Requeue || result.RequeueAfter != 0 {
+		return true
+	}
+
+	return false
 }

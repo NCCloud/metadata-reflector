@@ -2,8 +2,6 @@ package reflector
 
 import (
 	"context"
-	"regexp"
-	"slices"
 	"strings"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
@@ -14,6 +12,26 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
+func (r *Controller) reconcileLabels(ctx context.Context, deployment *appsv1.Deployment) (ctrl.Result, error) {
+	r.logger.Info("Starting label reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+	defer r.logger.Info("Finished label reconciliation",
+		"deployment", deployment.Name, "namespace", deployment.Namespace)
+
+	var (
+		labelReflectResult ctrl.Result
+		labelReflectError  error
+	)
+
+	if common.MapHasPrefix(ReflectorLabelsAnnotationDomain, deployment.Annotations) {
+		labelReflectResult, labelReflectError = r.reflectLabels(ctx, deployment)
+	} else {
+		labelReflectResult, labelReflectError = r.unsetReflectedLabels(ctx, deployment)
+	}
+
+	return labelReflectResult, labelReflectError
+}
+
 // reflect configuration from deployment to managed pods.
 func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deployment,
 ) (ctrl.Result, error) {
@@ -23,7 +41,7 @@ func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deplo
 	reflectorAnnotations := common.FindPartialKeys(
 		ReflectorLabelsAnnotationDomain, deployment.Annotations)
 
-	labelsToReflect, labelsErr := r.labelsToReflect(
+	labelsToReflect, labelsErr := r.keysToReflect(
 		reflectorAnnotations, deployment.Labels)
 	if labelsErr != nil {
 		r.logger.Error(labelsErr, "Could not get labels to reflect", "deployment", deploymentName)
@@ -36,7 +54,7 @@ func (r *Controller) reflectLabels(ctx context.Context, deployment *appsv1.Deplo
 		return r.unsetReflectedLabels(ctx, deployment)
 	}
 
-	reflectedAnnotations := r.getReflectedAnnotations(common.MapKeysAsString(labelsToReflect))
+	reflectedAnnotations := r.getReflectorAnnForLabels(common.MapKeysAsString(labelsToReflect))
 
 	pods, podListError := r.getManagedPods(ctx, deployment)
 	if podListError != nil {
@@ -184,59 +202,6 @@ func (r *Controller) unsetLabels(labels []string, pod *v1.Pod) bool {
 	return anyLabelDeleted
 }
 
-// given reflector annotations from the object and a map of labels, find labels that need to be reflected.
-func (r *Controller) labelsToReflect(
-	reflectorAnnotations map[string]string, labels map[string]string,
-) (map[string]string, error) {
-	expectedAnnotationParts := 2
-	labelsToReflect := make(map[string]string)
-
-	for annKey, annValue := range reflectorAnnotations {
-		annotationKeyParts := strings.Split(annKey, "/")
-		if len(annotationKeyParts) != expectedAnnotationParts {
-			r.logger.Error(ErrUnparsableAnnotation,
-				"Annotation should consist of exactly 2 parts",
-				"annotation", annKey, "parts", len(annotationKeyParts),
-			)
-
-			return nil, ErrUnparsableAnnotation
-		}
-
-		switch operation := annotationKeyParts[1]; operation {
-		case ReflectorLabelsList:
-			annotationLabels := strings.Split(annValue, ",")
-
-			for key, value := range labels {
-				if !slices.Contains(annotationLabels, key) {
-					continue
-				}
-
-				labelsToReflect[key] = value
-			}
-
-		case ReflectorLabelsRegex:
-			pattern := common.ExactMatchRegex(annValue)
-			regex := regexp.MustCompile(pattern)
-
-			for key, value := range labels {
-				if !regex.MatchString(key) {
-					continue
-				}
-
-				labelsToReflect[key] = value
-			}
-
-		default:
-			r.logger.Error(ErrUnparsableAnnotation,
-				"Annotation doesn't have a valid operation to parse", "annotation", annKey)
-
-			return nil, ErrUnparsableAnnotation
-		}
-	}
-
-	return labelsToReflect, nil
-}
-
 // unset excessive labels given the labels we expect to be present on an object.
 // returns if any label was unset.
 func (r *Controller) unsetExcessiveLabels(labelsToReflect map[string]string, pod *v1.Pod) bool {
@@ -260,4 +225,13 @@ func (r *Controller) unsetExcessiveLabels(labelsToReflect map[string]string, pod
 	}
 
 	return false
+}
+
+// generate a map of annotations that help identify what labels
+// were set by the reflector on the managed object.
+func (r *Controller) getReflectorAnnForLabels(labelsToReflect string) map[string]string {
+	annotationsToReflect := make(map[string]string)
+	annotationsToReflect[ReflectorLabelsReflectedAnnotation] = labelsToReflect
+
+	return annotationsToReflect
 }

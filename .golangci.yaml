@@ -1,21 +1,42 @@
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
-  - exhaustruct # Disallows to leave unused fields in structs
-  - depguard # Exhausting
-  - gci # Disable gci import ordering checker since its buggy
-  - ireturn # Disallows to return Interfaces
-  - wrapcheck # Disallows to use non-wrapped errors
-  - gochecknoinits # Disallows to use init functions
-  - perfsprint
-  - gochecknoglobals
-  - funlen
-linters-settings:
-  cyclop:
-    max-complexity: 12
-  varnamelen:
-    min-name-length: 1
+    - exhaustruct # Disallows to leave unused fields in structs
+    - depguard # Exhausting
+    - ireturn # Disallows to return Interfaces
+    - wrapcheck # Disallows to use non-wrapped errors
+    - gochecknoinits # Disallows to use init functions
+    - perfsprint
+    - gochecknoglobals
+    - funlen
+  settings:
+    cyclop:
+      max-complexity: 12
+    varnamelen:
+      min-name-length: 1
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 run:
-  go: '1.23'
-  timeout: 10m
+  go: "1.24"
   tests: false

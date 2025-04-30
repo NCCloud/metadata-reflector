@@ -1,4 +1,6 @@
-dir: mocks/{{ replaceAll .PackagePath "internal" "internal_" }}
+dir: mocks/{{ replaceAll "internal" "internal_" .SrcPackagePath }}
+template: testify
+filename: mock_{{ .InterfaceName }}.go
 packages:
   sigs.k8s.io/controller-runtime/pkg/cache:
     interfaces:
@@ -12,4 +14,3 @@ packages:
   github.com/NCCloud/metadata-reflector/internal/clients:
     interfaces:
       KubernetesClient:
-issue-845-fix: True

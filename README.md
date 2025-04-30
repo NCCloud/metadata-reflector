@@ -57,13 +57,16 @@ Below is a table of supported annotations with their purpose
 | `labels.metadata-reflector.spaceship.com/list`  | A comma-separated list of labels to reflect from the object that the annotation is added to |
 | `labels.metadata-reflector.spaceship.com/regex`  | A regular expression to list the labels that will be reflected from the object that the annotation is added to |
 | `labels.metadata-reflector.spaceship.com/reflected-list`  | A comma-separated list of labels reflected by Metadata Reflector to target objects. The annotation is only added to target objects |
+| `annotations.metadata-reflector.spaceship.com/list`  | A comma-separated list of annotations to reflect from the object that the annotation is added to |
+| `annotations.metadata-reflector.spaceship.com/regex`  | A regular expression to list the annotations that will be reflected from the object that the annotation is added to |
+| `annotations.metadata-reflector.spaceship.com/reflected-list`  | A comma-separated list of annotations reflected by Metadata Reflector to target objects. The annotation is only added to target objects |
 
 ### Features
 
 Below is a list of implemented features and features that could fit into this project but are not yet implemented:
 
 - [x] Label reflection from `Deployment`s to managed `Pod`s
-- [ ] Annotation reflection from `Deployment`s to managed `Pod`s
+- [x] Annotation reflection from `Deployment`s to managed `Pod`s
 - [ ] Label & Annotation reflection from an arbitrary source (e.g. Secret, ConfigMap, etc.) to an arbitrary target (e.g. `Deployment`, etc.)
 - [x] A background job to periodically check the state of the target resources
 
