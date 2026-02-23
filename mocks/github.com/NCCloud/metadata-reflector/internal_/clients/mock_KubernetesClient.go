@@ -8,7 +8,7 @@ import (
 	"context"
 
 	mock "github.com/stretchr/testify/mock"
-	v1 "k8s.io/api/apps/v1"
+	"k8s.io/api/apps/v1"
 	v10 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
@@ -75,15 +75,26 @@ type MockKubernetesClient_GetDeployment_Call struct {
 }
 
 // GetDeployment is a helper method to define mock.On call
-//   - ctx
-//   - namespacedName
+//   - ctx context.Context
+//   - namespacedName types.NamespacedName
 func (_e *MockKubernetesClient_Expecter) GetDeployment(ctx interface{}, namespacedName interface{}) *MockKubernetesClient_GetDeployment_Call {
 	return &MockKubernetesClient_GetDeployment_Call{Call: _e.mock.On("GetDeployment", ctx, namespacedName)}
 }
 
 func (_c *MockKubernetesClient_GetDeployment_Call) Run(run func(ctx context.Context, namespacedName types.NamespacedName)) *MockKubernetesClient_GetDeployment_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(types.NamespacedName))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 types.NamespacedName
+		if args[1] != nil {
+			arg1 = args[1].(types.NamespacedName)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -132,15 +143,26 @@ type MockKubernetesClient_ListDeployments_Call struct {
 }
 
 // ListDeployments is a helper method to define mock.On call
-//   - ctx
-//   - labelSelector
+//   - ctx context.Context
+//   - labelSelector labels.Selector
 func (_e *MockKubernetesClient_Expecter) ListDeployments(ctx interface{}, labelSelector interface{}) *MockKubernetesClient_ListDeployments_Call {
 	return &MockKubernetesClient_ListDeployments_Call{Call: _e.mock.On("ListDeployments", ctx, labelSelector)}
 }
 
 func (_c *MockKubernetesClient_ListDeployments_Call) Run(run func(ctx context.Context, labelSelector labels.Selector)) *MockKubernetesClient_ListDeployments_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(labels.Selector))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 labels.Selector
+		if args[1] != nil {
+			arg1 = args[1].(labels.Selector)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -189,15 +211,26 @@ type MockKubernetesClient_ListPods_Call struct {
 }
 
 // ListPods is a helper method to define mock.On call
-//   - ctx
-//   - labelSelector
+//   - ctx context.Context
+//   - labelSelector labels.Selector
 func (_e *MockKubernetesClient_Expecter) ListPods(ctx interface{}, labelSelector interface{}) *MockKubernetesClient_ListPods_Call {
 	return &MockKubernetesClient_ListPods_Call{Call: _e.mock.On("ListPods", ctx, labelSelector)}
 }
 
 func (_c *MockKubernetesClient_ListPods_Call) Run(run func(ctx context.Context, labelSelector labels.Selector)) *MockKubernetesClient_ListPods_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(labels.Selector))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 labels.Selector
+		if args[1] != nil {
+			arg1 = args[1].(labels.Selector)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -235,15 +268,26 @@ type MockKubernetesClient_UpdatePod_Call struct {
 }
 
 // UpdatePod is a helper method to define mock.On call
-//   - ctx
-//   - pod
+//   - ctx context.Context
+//   - pod v10.Pod
 func (_e *MockKubernetesClient_Expecter) UpdatePod(ctx interface{}, pod interface{}) *MockKubernetesClient_UpdatePod_Call {
 	return &MockKubernetesClient_UpdatePod_Call{Call: _e.mock.On("UpdatePod", ctx, pod)}
 }
 
 func (_c *MockKubernetesClient_UpdatePod_Call) Run(run func(ctx context.Context, pod v10.Pod)) *MockKubernetesClient_UpdatePod_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(v10.Pod))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 v10.Pod
+		if args[1] != nil {
+			arg1 = args[1].(v10.Pod)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }

@@ -12,4 +12,5 @@ if empty, all namespaces will be watched
  - `HEALTH_CHECK_PORT` (default: `8083`) - the port for health checking
  - `ENABLE_LEADER_ELECTION` (default: `false`) - whether to enable leader election
  - `MAX_CONCURRENT_RECONCILES` (default: `1`) - the number of reconciliations the controller can perform concurrently
+ - `LOG_LEVEL` (default: `info`) - the log level (debug, info, warn, error)
 

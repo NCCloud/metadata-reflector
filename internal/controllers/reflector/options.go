@@ -14,7 +14,7 @@ var (
 	ReflectorLabelsAnnotationDomain      = fmt.Sprintf("labels.%s", ReflectorAnnotationDomain)
 	ReflectorAnnotationsAnnotationDomain = fmt.Sprintf("annotations.%s", ReflectorAnnotationDomain)
 
-	// a list of annotations that were added to the object by the controller.
+	// ReflectorLabelsReflectedAnnotation a list of annotations that were added to the object by the controller.
 	ReflectorLabelsReflectedAnnotation = fmt.Sprintf("%s/%s", ReflectorLabelsAnnotationDomain, "reflected-list")
 
 	ReflectorAnnotationsReflectedAnnotation = fmt.Sprintf(

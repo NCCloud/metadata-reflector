@@ -46,7 +46,7 @@ func (r *Controller) getManagedPods(
 		return nil, ErrPodNotFound
 	}
 
-	r.logger.Info("Found Managed pods",
+	r.logger.V(1).Info("Found Managed pods",
 		"count", len(pods.Items), "selector", podSelector.String())
 
 	return pods, nil

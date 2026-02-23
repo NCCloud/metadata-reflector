@@ -13,6 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/events"
 	"k8s.io/client-go/tools/record"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -20,6 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/conversion"
 )
 
 // NewMockManager creates a new instance of MockManager. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -72,14 +74,20 @@ type MockManager_Add_Call struct {
 }
 
 // Add is a helper method to define mock.On call
-//   - runnable
+//   - runnable manager.Runnable
 func (_e *MockManager_Expecter) Add(runnable interface{}) *MockManager_Add_Call {
 	return &MockManager_Add_Call{Call: _e.mock.On("Add", runnable)}
 }
 
 func (_c *MockManager_Add_Call) Run(run func(runnable manager.Runnable)) *MockManager_Add_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(manager.Runnable))
+		var arg0 manager.Runnable
+		if args[0] != nil {
+			arg0 = args[0].(manager.Runnable)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -117,15 +125,26 @@ type MockManager_AddHealthzCheck_Call struct {
 }
 
 // AddHealthzCheck is a helper method to define mock.On call
-//   - name
-//   - check
+//   - name string
+//   - check healthz.Checker
 func (_e *MockManager_Expecter) AddHealthzCheck(name interface{}, check interface{}) *MockManager_AddHealthzCheck_Call {
 	return &MockManager_AddHealthzCheck_Call{Call: _e.mock.On("AddHealthzCheck", name, check)}
 }
 
 func (_c *MockManager_AddHealthzCheck_Call) Run(run func(name string, check healthz.Checker)) *MockManager_AddHealthzCheck_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(healthz.Checker))
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 healthz.Checker
+		if args[1] != nil {
+			arg1 = args[1].(healthz.Checker)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -163,15 +182,26 @@ type MockManager_AddMetricsServerExtraHandler_Call struct {
 }
 
 // AddMetricsServerExtraHandler is a helper method to define mock.On call
-//   - path
-//   - handler
+//   - path string
+//   - handler http.Handler
 func (_e *MockManager_Expecter) AddMetricsServerExtraHandler(path interface{}, handler interface{}) *MockManager_AddMetricsServerExtraHandler_Call {
 	return &MockManager_AddMetricsServerExtraHandler_Call{Call: _e.mock.On("AddMetricsServerExtraHandler", path, handler)}
 }
 
 func (_c *MockManager_AddMetricsServerExtraHandler_Call) Run(run func(path string, handler http.Handler)) *MockManager_AddMetricsServerExtraHandler_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(http.Handler))
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 http.Handler
+		if args[1] != nil {
+			arg1 = args[1].(http.Handler)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -209,15 +239,26 @@ type MockManager_AddReadyzCheck_Call struct {
 }
 
 // AddReadyzCheck is a helper method to define mock.On call
-//   - name
-//   - check
+//   - name string
+//   - check healthz.Checker
 func (_e *MockManager_Expecter) AddReadyzCheck(name interface{}, check interface{}) *MockManager_AddReadyzCheck_Call {
 	return &MockManager_AddReadyzCheck_Call{Call: _e.mock.On("AddReadyzCheck", name, check)}
 }
 
 func (_c *MockManager_AddReadyzCheck_Call) Run(run func(name string, check healthz.Checker)) *MockManager_AddReadyzCheck_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string), args[1].(healthz.Checker))
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 healthz.Checker
+		if args[1] != nil {
+			arg1 = args[1].(healthz.Checker)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -506,6 +547,105 @@ func (_c *MockManager_GetControllerOptions_Call) RunAndReturn(run func() config.
 	return _c
 }
 
+// GetConverterRegistry provides a mock function for the type MockManager
+func (_mock *MockManager) GetConverterRegistry() conversion.Registry {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetConverterRegistry")
+	}
+
+	var r0 conversion.Registry
+	if returnFunc, ok := ret.Get(0).(func() conversion.Registry); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(conversion.Registry)
+		}
+	}
+	return r0
+}
+
+// MockManager_GetConverterRegistry_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetConverterRegistry'
+type MockManager_GetConverterRegistry_Call struct {
+	*mock.Call
+}
+
+// GetConverterRegistry is a helper method to define mock.On call
+func (_e *MockManager_Expecter) GetConverterRegistry() *MockManager_GetConverterRegistry_Call {
+	return &MockManager_GetConverterRegistry_Call{Call: _e.mock.On("GetConverterRegistry")}
+}
+
+func (_c *MockManager_GetConverterRegistry_Call) Run(run func()) *MockManager_GetConverterRegistry_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockManager_GetConverterRegistry_Call) Return(registry conversion.Registry) *MockManager_GetConverterRegistry_Call {
+	_c.Call.Return(registry)
+	return _c
+}
+
+func (_c *MockManager_GetConverterRegistry_Call) RunAndReturn(run func() conversion.Registry) *MockManager_GetConverterRegistry_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetEventRecorder provides a mock function for the type MockManager
+func (_mock *MockManager) GetEventRecorder(name string) events.EventRecorder {
+	ret := _mock.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetEventRecorder")
+	}
+
+	var r0 events.EventRecorder
+	if returnFunc, ok := ret.Get(0).(func(string) events.EventRecorder); ok {
+		r0 = returnFunc(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(events.EventRecorder)
+		}
+	}
+	return r0
+}
+
+// MockManager_GetEventRecorder_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetEventRecorder'
+type MockManager_GetEventRecorder_Call struct {
+	*mock.Call
+}
+
+// GetEventRecorder is a helper method to define mock.On call
+//   - name string
+func (_e *MockManager_Expecter) GetEventRecorder(name interface{}) *MockManager_GetEventRecorder_Call {
+	return &MockManager_GetEventRecorder_Call{Call: _e.mock.On("GetEventRecorder", name)}
+}
+
+func (_c *MockManager_GetEventRecorder_Call) Run(run func(name string)) *MockManager_GetEventRecorder_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockManager_GetEventRecorder_Call) Return(v events.EventRecorder) *MockManager_GetEventRecorder_Call {
+	_c.Call.Return(v)
+	return _c
+}
+
+func (_c *MockManager_GetEventRecorder_Call) RunAndReturn(run func(name string) events.EventRecorder) *MockManager_GetEventRecorder_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetEventRecorderFor provides a mock function for the type MockManager
 func (_mock *MockManager) GetEventRecorderFor(name string) record.EventRecorder {
 	ret := _mock.Called(name)
@@ -531,14 +671,20 @@ type MockManager_GetEventRecorderFor_Call struct {
 }
 
 // GetEventRecorderFor is a helper method to define mock.On call
-//   - name
+//   - name string
 func (_e *MockManager_Expecter) GetEventRecorderFor(name interface{}) *MockManager_GetEventRecorderFor_Call {
 	return &MockManager_GetEventRecorderFor_Call{Call: _e.mock.On("GetEventRecorderFor", name)}
 }
 
 func (_c *MockManager_GetEventRecorderFor_Call) Run(run func(name string)) *MockManager_GetEventRecorderFor_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -850,14 +996,20 @@ type MockManager_Start_Call struct {
 }
 
 // Start is a helper method to define mock.On call
-//   - ctx
+//   - ctx context.Context
 func (_e *MockManager_Expecter) Start(ctx interface{}) *MockManager_Start_Call {
 	return &MockManager_Start_Call{Call: _e.mock.On("Start", ctx)}
 }
 
 func (_c *MockManager_Start_Call) Run(run func(ctx context.Context)) *MockManager_Start_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }

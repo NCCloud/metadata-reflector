@@ -41,6 +41,78 @@ func (_m *MockClient) EXPECT() *MockClient_Expecter {
 	return &MockClient_Expecter{mock: &_m.Mock}
 }
 
+// Apply provides a mock function for the type MockClient
+func (_mock *MockClient) Apply(ctx context.Context, obj runtime.ApplyConfiguration, opts ...client.ApplyOption) error {
+	var tmpRet mock.Arguments
+	if len(opts) > 0 {
+		tmpRet = _mock.Called(ctx, obj, opts)
+	} else {
+		tmpRet = _mock.Called(ctx, obj)
+	}
+	ret := tmpRet
+
+	if len(ret) == 0 {
+		panic("no return value specified for Apply")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, runtime.ApplyConfiguration, ...client.ApplyOption) error); ok {
+		r0 = returnFunc(ctx, obj, opts...)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockClient_Apply_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Apply'
+type MockClient_Apply_Call struct {
+	*mock.Call
+}
+
+// Apply is a helper method to define mock.On call
+//   - ctx context.Context
+//   - obj runtime.ApplyConfiguration
+//   - opts ...client.ApplyOption
+func (_e *MockClient_Expecter) Apply(ctx interface{}, obj interface{}, opts ...interface{}) *MockClient_Apply_Call {
+	return &MockClient_Apply_Call{Call: _e.mock.On("Apply",
+		append([]interface{}{ctx, obj}, opts...)...)}
+}
+
+func (_c *MockClient_Apply_Call) Run(run func(ctx context.Context, obj runtime.ApplyConfiguration, opts ...client.ApplyOption)) *MockClient_Apply_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 runtime.ApplyConfiguration
+		if args[1] != nil {
+			arg1 = args[1].(runtime.ApplyConfiguration)
+		}
+		var arg2 []client.ApplyOption
+		var variadicArgs []client.ApplyOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.ApplyOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
+	})
+	return _c
+}
+
+func (_c *MockClient_Apply_Call) Return(err error) *MockClient_Apply_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockClient_Apply_Call) RunAndReturn(run func(ctx context.Context, obj runtime.ApplyConfiguration, opts ...client.ApplyOption) error) *MockClient_Apply_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Create provides a mock function for the type MockClient
 func (_mock *MockClient) Create(ctx context.Context, obj client.Object, opts ...client.CreateOption) error {
 	var tmpRet mock.Arguments
@@ -70,9 +142,9 @@ type MockClient_Create_Call struct {
 }
 
 // Create is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - opts ...client.CreateOption
 func (_e *MockClient_Expecter) Create(ctx interface{}, obj interface{}, opts ...interface{}) *MockClient_Create_Call {
 	return &MockClient_Create_Call{Call: _e.mock.On("Create",
 		append([]interface{}{ctx, obj}, opts...)...)}
@@ -80,8 +152,25 @@ func (_e *MockClient_Expecter) Create(ctx interface{}, obj interface{}, opts ...
 
 func (_c *MockClient_Create_Call) Run(run func(ctx context.Context, obj client.Object, opts ...client.CreateOption)) *MockClient_Create_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.CreateOption)
-		run(args[0].(context.Context), args[1].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 []client.CreateOption
+		var variadicArgs []client.CreateOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.CreateOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -125,9 +214,9 @@ type MockClient_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - opts ...client.DeleteOption
 func (_e *MockClient_Expecter) Delete(ctx interface{}, obj interface{}, opts ...interface{}) *MockClient_Delete_Call {
 	return &MockClient_Delete_Call{Call: _e.mock.On("Delete",
 		append([]interface{}{ctx, obj}, opts...)...)}
@@ -135,8 +224,25 @@ func (_e *MockClient_Expecter) Delete(ctx interface{}, obj interface{}, opts ...
 
 func (_c *MockClient_Delete_Call) Run(run func(ctx context.Context, obj client.Object, opts ...client.DeleteOption)) *MockClient_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.DeleteOption)
-		run(args[0].(context.Context), args[1].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 []client.DeleteOption
+		var variadicArgs []client.DeleteOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.DeleteOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -180,9 +286,9 @@ type MockClient_DeleteAllOf_Call struct {
 }
 
 // DeleteAllOf is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - opts ...client.DeleteAllOfOption
 func (_e *MockClient_Expecter) DeleteAllOf(ctx interface{}, obj interface{}, opts ...interface{}) *MockClient_DeleteAllOf_Call {
 	return &MockClient_DeleteAllOf_Call{Call: _e.mock.On("DeleteAllOf",
 		append([]interface{}{ctx, obj}, opts...)...)}
@@ -190,8 +296,25 @@ func (_e *MockClient_Expecter) DeleteAllOf(ctx interface{}, obj interface{}, opt
 
 func (_c *MockClient_DeleteAllOf_Call) Run(run func(ctx context.Context, obj client.Object, opts ...client.DeleteAllOfOption)) *MockClient_DeleteAllOf_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.DeleteAllOfOption)
-		run(args[0].(context.Context), args[1].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 []client.DeleteAllOfOption
+		var variadicArgs []client.DeleteAllOfOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.DeleteAllOfOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -235,10 +358,10 @@ type MockClient_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx
-//   - key
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - key client.ObjectKey
+//   - obj client.Object
+//   - opts ...client.GetOption
 func (_e *MockClient_Expecter) Get(ctx interface{}, key interface{}, obj interface{}, opts ...interface{}) *MockClient_Get_Call {
 	return &MockClient_Get_Call{Call: _e.mock.On("Get",
 		append([]interface{}{ctx, key, obj}, opts...)...)}
@@ -246,8 +369,30 @@ func (_e *MockClient_Expecter) Get(ctx interface{}, key interface{}, obj interfa
 
 func (_c *MockClient_Get_Call) Run(run func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption)) *MockClient_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[3].([]client.GetOption)
-		run(args[0].(context.Context), args[1].(client.ObjectKey), args[2].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.ObjectKey
+		if args[1] != nil {
+			arg1 = args[1].(client.ObjectKey)
+		}
+		var arg2 client.Object
+		if args[2] != nil {
+			arg2 = args[2].(client.Object)
+		}
+		var arg3 []client.GetOption
+		var variadicArgs []client.GetOption
+		if len(args) > 3 {
+			variadicArgs = args[3].([]client.GetOption)
+		}
+		arg3 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3...,
+		)
 	})
 	return _c
 }
@@ -294,14 +439,20 @@ type MockClient_GroupVersionKindFor_Call struct {
 }
 
 // GroupVersionKindFor is a helper method to define mock.On call
-//   - obj
+//   - obj runtime.Object
 func (_e *MockClient_Expecter) GroupVersionKindFor(obj interface{}) *MockClient_GroupVersionKindFor_Call {
 	return &MockClient_GroupVersionKindFor_Call{Call: _e.mock.On("GroupVersionKindFor", obj)}
 }
 
 func (_c *MockClient_GroupVersionKindFor_Call) Run(run func(obj runtime.Object)) *MockClient_GroupVersionKindFor_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(runtime.Object))
+		var arg0 runtime.Object
+		if args[0] != nil {
+			arg0 = args[0].(runtime.Object)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -348,14 +499,20 @@ type MockClient_IsObjectNamespaced_Call struct {
 }
 
 // IsObjectNamespaced is a helper method to define mock.On call
-//   - obj
+//   - obj runtime.Object
 func (_e *MockClient_Expecter) IsObjectNamespaced(obj interface{}) *MockClient_IsObjectNamespaced_Call {
 	return &MockClient_IsObjectNamespaced_Call{Call: _e.mock.On("IsObjectNamespaced", obj)}
 }
 
 func (_c *MockClient_IsObjectNamespaced_Call) Run(run func(obj runtime.Object)) *MockClient_IsObjectNamespaced_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(runtime.Object))
+		var arg0 runtime.Object
+		if args[0] != nil {
+			arg0 = args[0].(runtime.Object)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -399,9 +556,9 @@ type MockClient_List_Call struct {
 }
 
 // List is a helper method to define mock.On call
-//   - ctx
-//   - list
-//   - opts
+//   - ctx context.Context
+//   - list client.ObjectList
+//   - opts ...client.ListOption
 func (_e *MockClient_Expecter) List(ctx interface{}, list interface{}, opts ...interface{}) *MockClient_List_Call {
 	return &MockClient_List_Call{Call: _e.mock.On("List",
 		append([]interface{}{ctx, list}, opts...)...)}
@@ -409,8 +566,25 @@ func (_e *MockClient_Expecter) List(ctx interface{}, list interface{}, opts ...i
 
 func (_c *MockClient_List_Call) Run(run func(ctx context.Context, list client.ObjectList, opts ...client.ListOption)) *MockClient_List_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.ListOption)
-		run(args[0].(context.Context), args[1].(client.ObjectList), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.ObjectList
+		if args[1] != nil {
+			arg1 = args[1].(client.ObjectList)
+		}
+		var arg2 []client.ListOption
+		var variadicArgs []client.ListOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.ListOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -454,10 +628,10 @@ type MockClient_Patch_Call struct {
 }
 
 // Patch is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - patch
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - patch client.Patch
+//   - opts ...client.PatchOption
 func (_e *MockClient_Expecter) Patch(ctx interface{}, obj interface{}, patch interface{}, opts ...interface{}) *MockClient_Patch_Call {
 	return &MockClient_Patch_Call{Call: _e.mock.On("Patch",
 		append([]interface{}{ctx, obj, patch}, opts...)...)}
@@ -465,8 +639,30 @@ func (_e *MockClient_Expecter) Patch(ctx interface{}, obj interface{}, patch int
 
 func (_c *MockClient_Patch_Call) Run(run func(ctx context.Context, obj client.Object, patch client.Patch, opts ...client.PatchOption)) *MockClient_Patch_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[3].([]client.PatchOption)
-		run(args[0].(context.Context), args[1].(client.Object), args[2].(client.Patch), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 client.Patch
+		if args[2] != nil {
+			arg2 = args[2].(client.Patch)
+		}
+		var arg3 []client.PatchOption
+		var variadicArgs []client.PatchOption
+		if len(args) > 3 {
+			variadicArgs = args[3].([]client.PatchOption)
+		}
+		arg3 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3...,
+		)
 	})
 	return _c
 }
@@ -644,14 +840,20 @@ type MockClient_SubResource_Call struct {
 }
 
 // SubResource is a helper method to define mock.On call
-//   - subResource
+//   - subResource string
 func (_e *MockClient_Expecter) SubResource(subResource interface{}) *MockClient_SubResource_Call {
 	return &MockClient_SubResource_Call{Call: _e.mock.On("SubResource", subResource)}
 }
 
 func (_c *MockClient_SubResource_Call) Run(run func(subResource string)) *MockClient_SubResource_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -695,9 +897,9 @@ type MockClient_Update_Call struct {
 }
 
 // Update is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - opts ...client.UpdateOption
 func (_e *MockClient_Expecter) Update(ctx interface{}, obj interface{}, opts ...interface{}) *MockClient_Update_Call {
 	return &MockClient_Update_Call{Call: _e.mock.On("Update",
 		append([]interface{}{ctx, obj}, opts...)...)}
@@ -705,8 +907,25 @@ func (_e *MockClient_Expecter) Update(ctx interface{}, obj interface{}, opts ...
 
 func (_c *MockClient_Update_Call) Run(run func(ctx context.Context, obj client.Object, opts ...client.UpdateOption)) *MockClient_Update_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.UpdateOption)
-		run(args[0].(context.Context), args[1].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 []client.UpdateOption
+		var variadicArgs []client.UpdateOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.UpdateOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }

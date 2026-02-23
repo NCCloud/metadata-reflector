@@ -25,6 +25,8 @@ type Config struct {
 	EnableLeaderElection bool `env:"ENABLE_LEADER_ELECTION" envDefault:"false"`
 	// the number of reconciliations the controller can perform concurrently
 	MaxConcurrentReconciles int `env:"MAX_CONCURRENT_RECONCILES" envDefault:"1"`
+	// the log level (debug, info, warn, error)
+	LogLevel string `env:"LOG_LEVEL" envDefault:"info"`
 }
 
 func NewConfig() *Config {

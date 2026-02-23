@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
 	mockKubernetesClient "github.com/NCCloud/metadata-reflector/mocks/github.com/NCCloud/metadata-reflector/internal_/clients"
@@ -681,7 +682,7 @@ func TestController_shouldRequeueNow(t *testing.T) {
 		{
 			name: "Requeue now",
 			args: args{
-				result: ctrl.Result{Requeue: true},
+				result: ctrl.Result{RequeueAfter: 1 * time.Second},
 			},
 			want: true,
 		},

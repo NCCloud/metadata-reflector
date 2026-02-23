@@ -2,6 +2,7 @@ version: "2"
 linters:
   default: all
   disable:
+    - wsl
     - exhaustruct # Disallows to leave unused fields in structs
     - depguard # Exhausting
     - ireturn # Disallows to return Interfaces
@@ -10,11 +11,17 @@ linters:
     - perfsprint
     - gochecknoglobals
     - funlen
+    - revive
+    - noinlineerr
   settings:
     cyclop:
       max-complexity: 12
     varnamelen:
       min-name-length: 1
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
   exclusions:
     generated: lax
     presets:
@@ -38,5 +45,5 @@ formatters:
       - builtin$
       - examples$
 run:
-  go: "1.24"
+  go: "1.26"
   tests: false
