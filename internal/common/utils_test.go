@@ -54,7 +54,7 @@ func TestMustReturn_PanicsOnError(t *testing.T) {
 func TestPointerTo(t *testing.T) {
 	value := 1
 
-	result := PointerTo(value)
+	result := new(value)
 
 	assert.Equal(t, &value, result)
 }

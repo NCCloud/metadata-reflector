@@ -1,24 +1,39 @@
 package main
 
 import (
-	"context"
+	"fmt"
+	"os"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
 	"github.com/NCCloud/metadata-reflector/internal/controllers/reflector"
-	_ "github.com/NCCloud/metadata-reflector/internal/metrics"
 
 	"github.com/NCCloud/metadata-reflector/internal/clients"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	"go.uber.org/zap/zapcore"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 func main() {
-	ctx := context.Background()
 	config := common.NewConfig()
-	logger := zap.New()
+
+	var level zapcore.Level
+	if err := level.UnmarshalText([]byte(config.LogLevel)); err != nil {
+		fmt.Fprintf(os.Stderr, "Invalid log level %q, defaulting to info, error: %v\n", config.LogLevel, err)
+		// default to info if invalid
+		level = zapcore.InfoLevel
+	}
+
+	opts := zap.Options{
+		Development: false,
+		Level:       level,
+	}
+
+	logger := zap.New(zap.UseFlagOptions(&opts))
+	ctrl.SetLogger(logger)
+	logger.Info("Log level configuration", "configured", level.String())
 
 	mgr, mgrErr := clients.NewControllerManager(config, logger)
 	if mgrErr != nil {
@@ -39,14 +54,6 @@ func main() {
 
 	if addReadyCheckErr := mgr.AddReadyzCheck("readyz", healthz.Ping); addReadyCheckErr != nil {
 		panic(addReadyCheckErr)
-	}
-
-	if config.BackgroundReflectionInterval != 0 {
-		go func() {
-			if err := reflectorController.StartBackgroundJob(ctx); err != nil {
-				panic(err)
-			}
-		}()
 	}
 
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {

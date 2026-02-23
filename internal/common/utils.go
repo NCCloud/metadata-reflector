@@ -20,7 +20,7 @@ func MustReturn[T any](t T, err error) T {
 }
 
 func PointerTo[T any](t T) *T {
-	return &t
+	return new(t)
 }
 
 func MapHasPrefix(prefix string, data map[string]string) bool {
@@ -33,12 +33,12 @@ func MapHasPrefix(prefix string, data map[string]string) bool {
 	return false
 }
 
-// given a map, join its keys with comma as the separator.
+// MapKeysAsString given a map, join its keys with comma as the separator.
 func MapKeysAsString(data map[string]string) string {
 	return strings.Join(MapKeysAsSlice(data), ",")
 }
 
-// given 2 slices, check if the actual slice contains elements that are not present in expected.
+// ExcessiveElements given 2 slices, check if the actual slice contains elements that are not present in expected.
 func ExcessiveElements(expected []string, actual []string) []string {
 	var excessiveItems []string
 
@@ -51,12 +51,12 @@ func ExcessiveElements(expected []string, actual []string) []string {
 	return excessiveItems
 }
 
-// get map keys as a slice.
+// MapKeysAsSlice get map keys as a slice.
 func MapKeysAsSlice(data map[string]string) []string {
 	return slices.Collect(maps.Keys(data))
 }
 
-// check if any map key contains given substring.
+// MapContainsPartialKey check if any map key contains given substring.
 func MapContainsPartialKey(partialKey string, data map[string]string) bool {
 	for key := range data {
 		if strings.Contains(key, partialKey) {
@@ -79,7 +79,7 @@ func FindPartialKeys(partialKey string, data map[string]string) map[string]strin
 	return matchingData
 }
 
-// given a pattern, make sure it will match the whole string.
+// ExactMatchRegex given a pattern, make sure it will match the whole string.
 func ExactMatchRegex(pattern string) string {
 	if !strings.HasPrefix(pattern, "^") {
 		pattern = fmt.Sprintf("^%s", pattern)

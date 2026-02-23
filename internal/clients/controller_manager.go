@@ -43,7 +43,6 @@ func NewControllerManager(config *common.Config, logger logr.Logger) (manager.Ma
 			MaxConcurrentReconciles: config.MaxConcurrentReconciles,
 		},
 	})
-
 	if managerErr != nil {
 		return nil, errors.Wrap(managerErr, "failed to get manager")
 	}

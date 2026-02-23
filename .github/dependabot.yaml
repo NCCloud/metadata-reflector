@@ -7,8 +7,13 @@ updates:
       time: "11:00"
       interval: "weekly"
       timezone: "Europe/Rome"
-    reviewers:
-      - "BonySmoke"
+    groups:
+      minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -16,5 +21,3 @@ updates:
       time: "11:00"
       interval: "weekly"
       timezone: "Europe/Rome"
-    reviewers:
-      - "BonySmoke"

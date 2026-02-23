@@ -2,6 +2,7 @@ package reflector
 
 import (
 	"context"
+	"maps"
 	"strings"
 
 	"github.com/NCCloud/metadata-reflector/internal/common"
@@ -12,9 +13,9 @@ import (
 )
 
 func (r *Controller) reconcileAnnotations(ctx context.Context, deployment *appsv1.Deployment) (ctrl.Result, error) {
-	r.logger.Info("Starting annotation reconciliation",
+	r.logger.V(1).Info("Starting annotation reconciliation",
 		"deployment", deployment.Name, "namespace", deployment.Namespace)
-	defer r.logger.Info("Finished annotation reconciliation",
+	defer r.logger.V(1).Info("Finished annotation reconciliation",
 		"deployment", deployment.Name, "namespace", deployment.Namespace)
 
 	var (
@@ -58,9 +59,7 @@ func (r *Controller) reflectAnnotations(ctx context.Context, deployment *appsv1.
 
 	specialReflectorAnn := r.getReflectorAnnForAnnotations(common.MapKeysAsString(annotationsToReflect))
 
-	for key, value := range specialReflectorAnn {
-		annotationsToReflect[key] = value
-	}
+	maps.Copy(annotationsToReflect, specialReflectorAnn)
 
 	pods, podListError := r.getManagedPods(ctx, deployment)
 	if podListError != nil {

@@ -33,8 +33,9 @@ func NewController(
 
 func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	namespacedName := req.NamespacedName
-	r.logger.Info("Starting reconciliation", "namespacedName", namespacedName)
-	defer r.logger.Info("Finished reconciliation", "namespacedName", namespacedName)
+
+	r.logger.V(1).Info("Starting reconciliation", "namespacedName", namespacedName)
+	defer r.logger.V(1).Info("Finished reconciliation", "namespacedName", namespacedName)
 
 	deployment, getDeployErr := r.kubeClient.GetDeployment(ctx, namespacedName)
 	if getDeployErr != nil {
@@ -61,7 +62,7 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return annReflectResult, annReflectError
 	}
 
-	return ctrl.Result{}, reflectorErrors.ErrorOrNil()
+	return ctrl.Result{RequeueAfter: r.config.BackgroundReflectionInterval}, reflectorErrors.ErrorOrNil()
 }
 
 func (r *Controller) FilterCreateEvents(e event.CreateEvent) bool {
@@ -141,9 +142,5 @@ func (r *Controller) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *Controller) shouldRequeueNow(result ctrl.Result) bool {
-	if result.Requeue || result.RequeueAfter != 0 {
-		return true
-	}
-
-	return false
+	return result.RequeueAfter != 0
 }

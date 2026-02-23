@@ -69,10 +69,10 @@ type MockCache_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx
-//   - key
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - key client.ObjectKey
+//   - obj client.Object
+//   - opts ...client.GetOption
 func (_e *MockCache_Expecter) Get(ctx interface{}, key interface{}, obj interface{}, opts ...interface{}) *MockCache_Get_Call {
 	return &MockCache_Get_Call{Call: _e.mock.On("Get",
 		append([]interface{}{ctx, key, obj}, opts...)...)}
@@ -80,8 +80,30 @@ func (_e *MockCache_Expecter) Get(ctx interface{}, key interface{}, obj interfac
 
 func (_c *MockCache_Get_Call) Run(run func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption)) *MockCache_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[3].([]client.GetOption)
-		run(args[0].(context.Context), args[1].(client.ObjectKey), args[2].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.ObjectKey
+		if args[1] != nil {
+			arg1 = args[1].(client.ObjectKey)
+		}
+		var arg2 client.Object
+		if args[2] != nil {
+			arg2 = args[2].(client.Object)
+		}
+		var arg3 []client.GetOption
+		var variadicArgs []client.GetOption
+		if len(args) > 3 {
+			variadicArgs = args[3].([]client.GetOption)
+		}
+		arg3 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3...,
+		)
 	})
 	return _c
 }
@@ -136,9 +158,9 @@ type MockCache_GetInformer_Call struct {
 }
 
 // GetInformer is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - opts
+//   - ctx context.Context
+//   - obj client.Object
+//   - opts ...cache.InformerGetOption
 func (_e *MockCache_Expecter) GetInformer(ctx interface{}, obj interface{}, opts ...interface{}) *MockCache_GetInformer_Call {
 	return &MockCache_GetInformer_Call{Call: _e.mock.On("GetInformer",
 		append([]interface{}{ctx, obj}, opts...)...)}
@@ -146,8 +168,25 @@ func (_e *MockCache_Expecter) GetInformer(ctx interface{}, obj interface{}, opts
 
 func (_c *MockCache_GetInformer_Call) Run(run func(ctx context.Context, obj client.Object, opts ...cache.InformerGetOption)) *MockCache_GetInformer_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]cache.InformerGetOption)
-		run(args[0].(context.Context), args[1].(client.Object), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 []cache.InformerGetOption
+		var variadicArgs []cache.InformerGetOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]cache.InformerGetOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -202,9 +241,9 @@ type MockCache_GetInformerForKind_Call struct {
 }
 
 // GetInformerForKind is a helper method to define mock.On call
-//   - ctx
-//   - gvk
-//   - opts
+//   - ctx context.Context
+//   - gvk schema.GroupVersionKind
+//   - opts ...cache.InformerGetOption
 func (_e *MockCache_Expecter) GetInformerForKind(ctx interface{}, gvk interface{}, opts ...interface{}) *MockCache_GetInformerForKind_Call {
 	return &MockCache_GetInformerForKind_Call{Call: _e.mock.On("GetInformerForKind",
 		append([]interface{}{ctx, gvk}, opts...)...)}
@@ -212,8 +251,25 @@ func (_e *MockCache_Expecter) GetInformerForKind(ctx interface{}, gvk interface{
 
 func (_c *MockCache_GetInformerForKind_Call) Run(run func(ctx context.Context, gvk schema.GroupVersionKind, opts ...cache.InformerGetOption)) *MockCache_GetInformerForKind_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]cache.InformerGetOption)
-		run(args[0].(context.Context), args[1].(schema.GroupVersionKind), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 schema.GroupVersionKind
+		if args[1] != nil {
+			arg1 = args[1].(schema.GroupVersionKind)
+		}
+		var arg2 []cache.InformerGetOption
+		var variadicArgs []cache.InformerGetOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]cache.InformerGetOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -251,17 +307,38 @@ type MockCache_IndexField_Call struct {
 }
 
 // IndexField is a helper method to define mock.On call
-//   - ctx
-//   - obj
-//   - field
-//   - extractValue
+//   - ctx context.Context
+//   - obj client.Object
+//   - field string
+//   - extractValue client.IndexerFunc
 func (_e *MockCache_Expecter) IndexField(ctx interface{}, obj interface{}, field interface{}, extractValue interface{}) *MockCache_IndexField_Call {
 	return &MockCache_IndexField_Call{Call: _e.mock.On("IndexField", ctx, obj, field, extractValue)}
 }
 
 func (_c *MockCache_IndexField_Call) Run(run func(ctx context.Context, obj client.Object, field string, extractValue client.IndexerFunc)) *MockCache_IndexField_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(client.Object), args[2].(string), args[3].(client.IndexerFunc))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		var arg2 string
+		if args[2] != nil {
+			arg2 = args[2].(string)
+		}
+		var arg3 client.IndexerFunc
+		if args[3] != nil {
+			arg3 = args[3].(client.IndexerFunc)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+			arg3,
+		)
 	})
 	return _c
 }
@@ -305,9 +382,9 @@ type MockCache_List_Call struct {
 }
 
 // List is a helper method to define mock.On call
-//   - ctx
-//   - list
-//   - opts
+//   - ctx context.Context
+//   - list client.ObjectList
+//   - opts ...client.ListOption
 func (_e *MockCache_Expecter) List(ctx interface{}, list interface{}, opts ...interface{}) *MockCache_List_Call {
 	return &MockCache_List_Call{Call: _e.mock.On("List",
 		append([]interface{}{ctx, list}, opts...)...)}
@@ -315,8 +392,25 @@ func (_e *MockCache_Expecter) List(ctx interface{}, list interface{}, opts ...in
 
 func (_c *MockCache_List_Call) Run(run func(ctx context.Context, list client.ObjectList, opts ...client.ListOption)) *MockCache_List_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		variadicArgs := args[2].([]client.ListOption)
-		run(args[0].(context.Context), args[1].(client.ObjectList), variadicArgs...)
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.ObjectList
+		if args[1] != nil {
+			arg1 = args[1].(client.ObjectList)
+		}
+		var arg2 []client.ListOption
+		var variadicArgs []client.ListOption
+		if len(args) > 2 {
+			variadicArgs = args[2].([]client.ListOption)
+		}
+		arg2 = variadicArgs
+		run(
+			arg0,
+			arg1,
+			arg2...,
+		)
 	})
 	return _c
 }
@@ -354,15 +448,26 @@ type MockCache_RemoveInformer_Call struct {
 }
 
 // RemoveInformer is a helper method to define mock.On call
-//   - ctx
-//   - obj
+//   - ctx context.Context
+//   - obj client.Object
 func (_e *MockCache_Expecter) RemoveInformer(ctx interface{}, obj interface{}) *MockCache_RemoveInformer_Call {
 	return &MockCache_RemoveInformer_Call{Call: _e.mock.On("RemoveInformer", ctx, obj)}
 }
 
 func (_c *MockCache_RemoveInformer_Call) Run(run func(ctx context.Context, obj client.Object)) *MockCache_RemoveInformer_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(client.Object))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 client.Object
+		if args[1] != nil {
+			arg1 = args[1].(client.Object)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -400,14 +505,20 @@ type MockCache_Start_Call struct {
 }
 
 // Start is a helper method to define mock.On call
-//   - ctx
+//   - ctx context.Context
 func (_e *MockCache_Expecter) Start(ctx interface{}) *MockCache_Start_Call {
 	return &MockCache_Start_Call{Call: _e.mock.On("Start", ctx)}
 }
 
 func (_c *MockCache_Start_Call) Run(run func(ctx context.Context)) *MockCache_Start_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -445,14 +556,20 @@ type MockCache_WaitForCacheSync_Call struct {
 }
 
 // WaitForCacheSync is a helper method to define mock.On call
-//   - ctx
+//   - ctx context.Context
 func (_e *MockCache_Expecter) WaitForCacheSync(ctx interface{}) *MockCache_WaitForCacheSync_Call {
 	return &MockCache_WaitForCacheSync_Call{Call: _e.mock.On("WaitForCacheSync", ctx)}
 }
 
 func (_c *MockCache_WaitForCacheSync_Call) Run(run func(ctx context.Context)) *MockCache_WaitForCacheSync_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
