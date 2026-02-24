@@ -7,6 +7,9 @@ import (
 	"testing"
 	"time"
 
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+
 	"github.com/NCCloud/metadata-reflector/internal/common"
 	mockKubernetesClient "github.com/NCCloud/metadata-reflector/mocks/github.com/NCCloud/metadata-reflector/internal_/clients"
 	"github.com/stretchr/testify/assert"
@@ -166,6 +169,26 @@ func TestController_Reconcile(t *testing.T) {
 			},
 			want:    ctrl.Result{},
 			wantErr: true,
+		},
+		{
+			name: "Deployment not found",
+			args: args{
+				req: ctrl.Request{
+					NamespacedName: types.NamespacedName{
+						Namespace: "default",
+						Name:      "test-deployment",
+					},
+				},
+			},
+			mockSetup: func(mockClient *mockKubernetesClient.MockKubernetesClient) {
+				mockClient.On("GetDeployment", mock.Anything, mock.Anything).
+					Return(&appsv1.Deployment{}, k8serrors.NewNotFound(schema.GroupResource{
+						Group:    "apps",
+						Resource: "deployments",
+					}, "test-deployment"))
+			},
+			want:    ctrl.Result{},
+			wantErr: false,
 		},
 		{
 			name: "Successful reconciliation with annotation reflection",

@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
@@ -39,6 +40,13 @@ func (r *Controller) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 
 	deployment, getDeployErr := r.kubeClient.GetDeployment(ctx, namespacedName)
 	if getDeployErr != nil {
+		if errors.IsNotFound(getDeployErr) {
+			// Deployment is gone, stop requeuing
+			r.logger.Info("Deployment not found, skipping reconciliation", "namespacedName", namespacedName)
+
+			return ctrl.Result{}, nil
+		}
+
 		r.logger.Error(getDeployErr, "Failed to get deployment", "namespacedName", namespacedName)
 
 		return ctrl.Result{}, getDeployErr
