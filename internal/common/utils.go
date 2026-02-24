@@ -13,16 +13,6 @@ func Must(err error) {
 	}
 }
 
-func MustReturn[T any](t T, err error) T {
-	Must(err)
-
-	return t
-}
-
-func PointerTo[T any](t T) *T {
-	return new(t)
-}
-
 func MapHasPrefix(prefix string, data map[string]string) bool {
 	for key := range data {
 		if strings.HasPrefix(key, prefix) {

@@ -36,6 +36,10 @@ cluster-delete: ## Delete the kind cluster.
 fmt: ## Run gofumpt.
 	@./helper.sh fmt
 
+.PHONY: check-deadcode
+check-deadcode: ## Run deadcode.
+	@./helper.sh check_deadcode
+
 .PHONY: lint
 lint: fmt ## Run linter.
 	@./helper.sh lint

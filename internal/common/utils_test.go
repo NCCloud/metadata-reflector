@@ -27,38 +27,6 @@ func TestMust_PanicsOnError(t *testing.T) {
 	t.Errorf("did not panic")
 }
 
-func TestMustReturn(t *testing.T) {
-	errorPossibleFunction := func(a bool) (bool, error) {
-		return a, nil
-	}
-
-	result := MustReturn(errorPossibleFunction(true))
-
-	assert.True(t, result)
-}
-
-func TestMustReturn_PanicsOnError(t *testing.T) {
-	errorPossibleFunction := func(a bool) (bool, error) {
-		return a, errors.New("error occured")
-	}
-
-	defer func() {
-		_ = recover()
-	}()
-
-	MustReturn(errorPossibleFunction(true))
-
-	t.Errorf("did not panic")
-}
-
-func TestPointerTo(t *testing.T) {
-	value := 1
-
-	result := new(value)
-
-	assert.Equal(t, &value, result)
-}
-
 func TestMapHasPrefix(t *testing.T) {
 	type args struct {
 		prefix string
