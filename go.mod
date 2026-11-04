@@ -1,6 +1,10 @@
 module github.com/NCCloud/metadata-reflector
 
-go 1.26
+go 1.27.3
+
+// Go 1.24+ enables MPTCP on listeners by default; disable it to stay off the
+// MPTCP attack surface of CVE-2026-98432.
+godebug multipathtcp=0
 
 require (
 	github.com/caarlos0/env/v11 v11.3.1
