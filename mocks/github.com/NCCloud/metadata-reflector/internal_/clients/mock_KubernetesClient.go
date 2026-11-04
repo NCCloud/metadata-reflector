@@ -20,10 +20,19 @@ func NewMockKubernetesClient(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockKubernetesClient {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockKubernetesClient{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -77,7 +86,7 @@ type MockKubernetesClient_GetDeployment_Call struct {
 // GetDeployment is a helper method to define mock.On call
 //   - ctx context.Context
 //   - namespacedName types.NamespacedName
-func (_e *MockKubernetesClient_Expecter) GetDeployment(ctx interface{}, namespacedName interface{}) *MockKubernetesClient_GetDeployment_Call {
+func (_e *MockKubernetesClient_Expecter) GetDeployment(ctx any, namespacedName any) *MockKubernetesClient_GetDeployment_Call {
 	return &MockKubernetesClient_GetDeployment_Call{Call: _e.mock.On("GetDeployment", ctx, namespacedName)}
 }
 
@@ -145,7 +154,7 @@ type MockKubernetesClient_ListDeployments_Call struct {
 // ListDeployments is a helper method to define mock.On call
 //   - ctx context.Context
 //   - labelSelector labels.Selector
-func (_e *MockKubernetesClient_Expecter) ListDeployments(ctx interface{}, labelSelector interface{}) *MockKubernetesClient_ListDeployments_Call {
+func (_e *MockKubernetesClient_Expecter) ListDeployments(ctx any, labelSelector any) *MockKubernetesClient_ListDeployments_Call {
 	return &MockKubernetesClient_ListDeployments_Call{Call: _e.mock.On("ListDeployments", ctx, labelSelector)}
 }
 
@@ -213,7 +222,7 @@ type MockKubernetesClient_ListPods_Call struct {
 // ListPods is a helper method to define mock.On call
 //   - ctx context.Context
 //   - labelSelector labels.Selector
-func (_e *MockKubernetesClient_Expecter) ListPods(ctx interface{}, labelSelector interface{}) *MockKubernetesClient_ListPods_Call {
+func (_e *MockKubernetesClient_Expecter) ListPods(ctx any, labelSelector any) *MockKubernetesClient_ListPods_Call {
 	return &MockKubernetesClient_ListPods_Call{Call: _e.mock.On("ListPods", ctx, labelSelector)}
 }
 
@@ -270,7 +279,7 @@ type MockKubernetesClient_UpdatePod_Call struct {
 // UpdatePod is a helper method to define mock.On call
 //   - ctx context.Context
 //   - pod v10.Pod
-func (_e *MockKubernetesClient_Expecter) UpdatePod(ctx interface{}, pod interface{}) *MockKubernetesClient_UpdatePod_Call {
+func (_e *MockKubernetesClient_Expecter) UpdatePod(ctx any, pod any) *MockKubernetesClient_UpdatePod_Call {
 	return &MockKubernetesClient_UpdatePod_Call{Call: _e.mock.On("UpdatePod", ctx, pod)}
 }
 

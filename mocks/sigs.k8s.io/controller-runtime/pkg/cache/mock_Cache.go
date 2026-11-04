@@ -19,10 +19,19 @@ func NewMockCache(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockCache {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockCache{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -73,9 +82,9 @@ type MockCache_Get_Call struct {
 //   - key client.ObjectKey
 //   - obj client.Object
 //   - opts ...client.GetOption
-func (_e *MockCache_Expecter) Get(ctx interface{}, key interface{}, obj interface{}, opts ...interface{}) *MockCache_Get_Call {
+func (_e *MockCache_Expecter) Get(ctx any, key any, obj any, opts ...any) *MockCache_Get_Call {
 	return &MockCache_Get_Call{Call: _e.mock.On("Get",
-		append([]interface{}{ctx, key, obj}, opts...)...)}
+		append([]any{ctx, key, obj}, opts...)...)}
 }
 
 func (_c *MockCache_Get_Call) Run(run func(ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption)) *MockCache_Get_Call {
@@ -161,9 +170,9 @@ type MockCache_GetInformer_Call struct {
 //   - ctx context.Context
 //   - obj client.Object
 //   - opts ...cache.InformerGetOption
-func (_e *MockCache_Expecter) GetInformer(ctx interface{}, obj interface{}, opts ...interface{}) *MockCache_GetInformer_Call {
+func (_e *MockCache_Expecter) GetInformer(ctx any, obj any, opts ...any) *MockCache_GetInformer_Call {
 	return &MockCache_GetInformer_Call{Call: _e.mock.On("GetInformer",
-		append([]interface{}{ctx, obj}, opts...)...)}
+		append([]any{ctx, obj}, opts...)...)}
 }
 
 func (_c *MockCache_GetInformer_Call) Run(run func(ctx context.Context, obj client.Object, opts ...cache.InformerGetOption)) *MockCache_GetInformer_Call {
@@ -244,9 +253,9 @@ type MockCache_GetInformerForKind_Call struct {
 //   - ctx context.Context
 //   - gvk schema.GroupVersionKind
 //   - opts ...cache.InformerGetOption
-func (_e *MockCache_Expecter) GetInformerForKind(ctx interface{}, gvk interface{}, opts ...interface{}) *MockCache_GetInformerForKind_Call {
+func (_e *MockCache_Expecter) GetInformerForKind(ctx any, gvk any, opts ...any) *MockCache_GetInformerForKind_Call {
 	return &MockCache_GetInformerForKind_Call{Call: _e.mock.On("GetInformerForKind",
-		append([]interface{}{ctx, gvk}, opts...)...)}
+		append([]any{ctx, gvk}, opts...)...)}
 }
 
 func (_c *MockCache_GetInformerForKind_Call) Run(run func(ctx context.Context, gvk schema.GroupVersionKind, opts ...cache.InformerGetOption)) *MockCache_GetInformerForKind_Call {
@@ -311,7 +320,7 @@ type MockCache_IndexField_Call struct {
 //   - obj client.Object
 //   - field string
 //   - extractValue client.IndexerFunc
-func (_e *MockCache_Expecter) IndexField(ctx interface{}, obj interface{}, field interface{}, extractValue interface{}) *MockCache_IndexField_Call {
+func (_e *MockCache_Expecter) IndexField(ctx any, obj any, field any, extractValue any) *MockCache_IndexField_Call {
 	return &MockCache_IndexField_Call{Call: _e.mock.On("IndexField", ctx, obj, field, extractValue)}
 }
 
@@ -385,9 +394,9 @@ type MockCache_List_Call struct {
 //   - ctx context.Context
 //   - list client.ObjectList
 //   - opts ...client.ListOption
-func (_e *MockCache_Expecter) List(ctx interface{}, list interface{}, opts ...interface{}) *MockCache_List_Call {
+func (_e *MockCache_Expecter) List(ctx any, list any, opts ...any) *MockCache_List_Call {
 	return &MockCache_List_Call{Call: _e.mock.On("List",
-		append([]interface{}{ctx, list}, opts...)...)}
+		append([]any{ctx, list}, opts...)...)}
 }
 
 func (_c *MockCache_List_Call) Run(run func(ctx context.Context, list client.ObjectList, opts ...client.ListOption)) *MockCache_List_Call {
@@ -450,7 +459,7 @@ type MockCache_RemoveInformer_Call struct {
 // RemoveInformer is a helper method to define mock.On call
 //   - ctx context.Context
 //   - obj client.Object
-func (_e *MockCache_Expecter) RemoveInformer(ctx interface{}, obj interface{}) *MockCache_RemoveInformer_Call {
+func (_e *MockCache_Expecter) RemoveInformer(ctx any, obj any) *MockCache_RemoveInformer_Call {
 	return &MockCache_RemoveInformer_Call{Call: _e.mock.On("RemoveInformer", ctx, obj)}
 }
 
@@ -506,7 +515,7 @@ type MockCache_Start_Call struct {
 
 // Start is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockCache_Expecter) Start(ctx interface{}) *MockCache_Start_Call {
+func (_e *MockCache_Expecter) Start(ctx any) *MockCache_Start_Call {
 	return &MockCache_Start_Call{Call: _e.mock.On("Start", ctx)}
 }
 
@@ -557,7 +566,7 @@ type MockCache_WaitForCacheSync_Call struct {
 
 // WaitForCacheSync is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockCache_Expecter) WaitForCacheSync(ctx interface{}) *MockCache_WaitForCacheSync_Call {
+func (_e *MockCache_Expecter) WaitForCacheSync(ctx any) *MockCache_WaitForCacheSync_Call {
 	return &MockCache_WaitForCacheSync_Call{Call: _e.mock.On("WaitForCacheSync", ctx)}
 }
 
