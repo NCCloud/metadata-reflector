@@ -4,6 +4,7 @@ linters:
   disable:
     - wsl
     - exhaustruct # Disallows to leave unused fields in structs
+    - exhaustruct_v5 # Successor of exhaustruct since golangci-lint v2.13.0
     - depguard # Exhausting
     - ireturn # Disallows to return Interfaces
     - wrapcheck # Disallows to use non-wrapped errors

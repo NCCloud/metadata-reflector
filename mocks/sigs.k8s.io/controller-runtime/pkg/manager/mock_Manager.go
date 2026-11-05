@@ -30,10 +30,19 @@ func NewMockManager(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockManager {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockManager{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -75,7 +84,7 @@ type MockManager_Add_Call struct {
 
 // Add is a helper method to define mock.On call
 //   - runnable manager.Runnable
-func (_e *MockManager_Expecter) Add(runnable interface{}) *MockManager_Add_Call {
+func (_e *MockManager_Expecter) Add(runnable any) *MockManager_Add_Call {
 	return &MockManager_Add_Call{Call: _e.mock.On("Add", runnable)}
 }
 
@@ -127,7 +136,7 @@ type MockManager_AddHealthzCheck_Call struct {
 // AddHealthzCheck is a helper method to define mock.On call
 //   - name string
 //   - check healthz.Checker
-func (_e *MockManager_Expecter) AddHealthzCheck(name interface{}, check interface{}) *MockManager_AddHealthzCheck_Call {
+func (_e *MockManager_Expecter) AddHealthzCheck(name any, check any) *MockManager_AddHealthzCheck_Call {
 	return &MockManager_AddHealthzCheck_Call{Call: _e.mock.On("AddHealthzCheck", name, check)}
 }
 
@@ -184,7 +193,7 @@ type MockManager_AddMetricsServerExtraHandler_Call struct {
 // AddMetricsServerExtraHandler is a helper method to define mock.On call
 //   - path string
 //   - handler http.Handler
-func (_e *MockManager_Expecter) AddMetricsServerExtraHandler(path interface{}, handler interface{}) *MockManager_AddMetricsServerExtraHandler_Call {
+func (_e *MockManager_Expecter) AddMetricsServerExtraHandler(path any, handler any) *MockManager_AddMetricsServerExtraHandler_Call {
 	return &MockManager_AddMetricsServerExtraHandler_Call{Call: _e.mock.On("AddMetricsServerExtraHandler", path, handler)}
 }
 
@@ -241,7 +250,7 @@ type MockManager_AddReadyzCheck_Call struct {
 // AddReadyzCheck is a helper method to define mock.On call
 //   - name string
 //   - check healthz.Checker
-func (_e *MockManager_Expecter) AddReadyzCheck(name interface{}, check interface{}) *MockManager_AddReadyzCheck_Call {
+func (_e *MockManager_Expecter) AddReadyzCheck(name any, check any) *MockManager_AddReadyzCheck_Call {
 	return &MockManager_AddReadyzCheck_Call{Call: _e.mock.On("AddReadyzCheck", name, check)}
 }
 
@@ -619,7 +628,7 @@ type MockManager_GetEventRecorder_Call struct {
 
 // GetEventRecorder is a helper method to define mock.On call
 //   - name string
-func (_e *MockManager_Expecter) GetEventRecorder(name interface{}) *MockManager_GetEventRecorder_Call {
+func (_e *MockManager_Expecter) GetEventRecorder(name any) *MockManager_GetEventRecorder_Call {
 	return &MockManager_GetEventRecorder_Call{Call: _e.mock.On("GetEventRecorder", name)}
 }
 
@@ -636,8 +645,8 @@ func (_c *MockManager_GetEventRecorder_Call) Run(run func(name string)) *MockMan
 	return _c
 }
 
-func (_c *MockManager_GetEventRecorder_Call) Return(v events.EventRecorder) *MockManager_GetEventRecorder_Call {
-	_c.Call.Return(v)
+func (_c *MockManager_GetEventRecorder_Call) Return(eventRecorder events.EventRecorder) *MockManager_GetEventRecorder_Call {
+	_c.Call.Return(eventRecorder)
 	return _c
 }
 
@@ -672,7 +681,7 @@ type MockManager_GetEventRecorderFor_Call struct {
 
 // GetEventRecorderFor is a helper method to define mock.On call
 //   - name string
-func (_e *MockManager_Expecter) GetEventRecorderFor(name interface{}) *MockManager_GetEventRecorderFor_Call {
+func (_e *MockManager_Expecter) GetEventRecorderFor(name any) *MockManager_GetEventRecorderFor_Call {
 	return &MockManager_GetEventRecorderFor_Call{Call: _e.mock.On("GetEventRecorderFor", name)}
 }
 
@@ -997,7 +1006,7 @@ type MockManager_Start_Call struct {
 
 // Start is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockManager_Expecter) Start(ctx interface{}) *MockManager_Start_Call {
+func (_e *MockManager_Expecter) Start(ctx any) *MockManager_Start_Call {
 	return &MockManager_Start_Call{Call: _e.mock.On("Start", ctx)}
 }
 
